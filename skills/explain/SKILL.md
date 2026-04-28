@@ -1,6 +1,12 @@
 ---
 name: explain
 description: 코드나 개념을 이해하기 쉽게 설명한다
+context: fork
+allowed-tools:
+  - Read
+  - Bash
+  - Grep
+  - Glob
 ---
 
 $ARGUMENTS 를 설명하라.

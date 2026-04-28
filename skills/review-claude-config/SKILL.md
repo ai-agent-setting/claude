@@ -18,30 +18,7 @@ allowed-tools:
 
 # 실행 절차
 
-## Step 0: submodule 최신화 확인
-
-```bash
-# .claude-best-practice 디렉터리 존재 여부 확인
-ls .claude-best-practice 2>/dev/null && echo EXISTS || echo MISSING
-```
-
-존재한다면:
-```bash
-# 로컬 커밋 해시
-git -C .claude-best-practice rev-parse HEAD
-
-# 원격 최신 커밋 해시
-git -C .claude-best-practice ls-remote origin HEAD | awk '{print $1}'
-```
-
-두 해시가 다르면 보고서 상단에 다음 경고를 출력하라:
-```
-⚠️  [경고] claude-best-practice submodule이 최신이 아닙니다.
-    최신화 후 재검토를 권장합니다:
-    git submodule update --remote .claude-best-practice
-```
-
-## Step 1: 파일 목록 수집
+## Step 0: 파일 목록 수집
 
 다음 파일/디렉터리를 탐색하라:
 
@@ -56,7 +33,7 @@ find .claude -type f 2>/dev/null | sort
 cat .gitmodules 2>/dev/null || echo "MISSING"
 ```
 
-## Step 2: 6개 영역 검토
+## Step 1: 5개 영역 검토
 
 각 영역을 criteria.md의 기준에 따라 검토하고, 항목별 Pass/Fail을 기록하라.
 
@@ -105,13 +82,6 @@ cat .gitmodules 2>/dev/null || echo "MISSING"
 - `allowed-tools` 명시적 제한 여부 (미제한이면 경고)
 - `user-invocable: false` 설정 여부 (에이전트는 직접 호출 방지 권장)
 
-### 영역 6: Submodule 상태
-
-`.gitmodules` 파일을 읽어라.
-- claude-best-practice submodule 항목 존재 여부
-- `.claude-best-practice/` 디렉터리가 비어있지 않은지 확인
-- Step 0에서 확인한 버전 최신 여부
-
 ---
 
 ## Step 3: 보고서 출력
@@ -131,8 +101,7 @@ cat .gitmodules 2>/dev/null || echo "MISSING"
 | 3 | Skills            | [상태] | [x/10] | [한 줄 요약]                    |
 | 4 | Rules             | [상태] | [x/10] | [한 줄 요약]                    |
 | 5 | Agents            | [상태] | [x/10] | [한 줄 요약]                    |
-| 6 | Submodule         | [상태] | [x/10] | [한 줄 요약]                    |
-|   | **종합**          |      | [x/60] |                                   |
+|   | **종합**          |      | [x/50] |                                   |
 
 ------------------------------------------------------------
  개선 제안 (우선순위 순)
@@ -151,9 +120,9 @@ cat .gitmodules 2>/dev/null || echo "MISSING"
  다음 단계
 ------------------------------------------------------------
 - 개선 적용 후 재검토: /review-claude-config [경로]
-- CLAUDE.md 작성 가이드: .claude-best-practice/guides/claude-md-authoring.md
-- Skills 가이드: .claude-best-practice/guides/skills-and-commands.md
-- 안티패턴 참고: .claude-best-practice/guides/common-pitfalls.md
+- CLAUDE.md 작성 가이드: ~/.claude/guides/claude-md-authoring.md
+- Skills 가이드: ~/.claude/guides/skills-and-commands.md
+- 안티패턴 참고: ~/.claude/guides/common-pitfalls.md
 ============================================================
 ```
 
@@ -166,4 +135,4 @@ cat .gitmodules 2>/dev/null || echo "MISSING"
 - **Skills**: 스킬 없으면 5점(보통). 있다면 frontmatter 완성도, 줄 수, 부작용 처리 기준으로 산정
 - **Rules**: 없으면 7점(보통 — 필수 아님). 있다면 frontmatter 완성도 기준
 - **Agents**: 없으면 8점(보통 — 선택 사항). 있다면 fork/allowed-tools 기준
-- **Submodule**: 존재(4점), 비어있지 않음(3점), 최신 버전(3점)
+- **Agents**: 없으면 8점(보통 — 선택 사항). 있다면 fork/allowed-tools 기준

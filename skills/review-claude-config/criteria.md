@@ -139,20 +139,6 @@ paths:
 
 ---
 
-## 영역 6: Submodule
-
-### 검토 항목
-
-| 항목 | 기준 | 점수 |
-|---|---|---|
-| `.gitmodules` 존재 | claude-best-practice submodule 항목 포함 | 4점 |
-| `.claude-best-practice/` 비어있지 않음 | `git submodule update --init` 실행 여부 | 3점 |
-| 최신 버전 | 로컬 커밋 = 원격 최신 커밋 | 3점 |
-
-submodule이 없어도 Claude Code는 동작하지만, 이 레포의 가이드·스킬을 활용하려면 submodule 추가를 권장한다.
-
----
-
 ## 우선순위 분류 기준
 
 | 우선순위 | 기준 |

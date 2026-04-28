@@ -1,6 +1,12 @@
 ---
 name: review
 description: 코드 또는 변경사항을 리뷰한다
+context: fork
+allowed-tools:
+  - Read
+  - Bash
+  - Grep
+  - Glob
 ---
 
 $ARGUMENTS 를 리뷰하라.

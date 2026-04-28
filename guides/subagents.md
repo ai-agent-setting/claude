@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-04-05 -->
+<!-- last-reviewed: 2026-04-27 -->
 # 서브에이전트 (Subagents)
 
 서브에이전트는 별도 컨텍스트 윈도우에서 독립적으로 실행되는 Claude 인스턴스다.
@@ -71,6 +71,9 @@ tools:
   - Read
   - Bash
 model: claude-sonnet-4-6
+skills:                  # 이 에이전트가 시작 시 프리로드할 스킬 목록
+  - review
+  - summarize
 ---
 
 $ARGUMENTS 파일을 독립적으로 리뷰하라.

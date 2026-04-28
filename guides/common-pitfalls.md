@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-04-05 -->
+<!-- last-reviewed: 2026-04-27 -->
 # 자주 하는 실수와 안티패턴
 
 > 참고: 공식 문서 → https://code.claude.com/docs/en/best-practices#avoid-common-failure-patterns
@@ -17,6 +17,12 @@
 증상: 수백줄의 CLAUDE.md를 작성했지만 Claude가 중간 내용을 무시한다.
 원인: 공식 권장은 200줄 이내.
 해결: 핵심만 남기고 `.claude/rules/`나 `@import`로 분리. 중요 규칙에는 "IMPORTANT"/"YOU MUST" 사용.
+
+### `@import`로 컨텍스트를 줄이려 한다
+
+오해: `@import`로 파일을 분리하면 컨텍스트가 절감된다.
+사실: `@import`는 구조 정리 효과만 있고 컨텍스트 절감 효과는 없다. 임포트된 파일 전체가 로드된다.
+해결: 컨텍스트를 줄이려면 path-scoped rules를 활용하라. 해당 파일이 편집될 때만 로드된다.
 
 ### `/compact` 후 지침이 사라진다
 
@@ -67,23 +73,6 @@ When compacting, always preserve:
 ### 병렬 세션 없이 복잡한 작업
 
 해결: 구현 세션과 리뷰 세션을 분리하라. 리뷰 Claude는 자신이 방금 작성한 코드에 편향되지 않는다.
-
----
-
-## Git Submodule 관련
-
-### submodule 디렉터리 내 파일을 직접 수정한다
-
-결과: 다음 `submodule update` 시 수정 내용이 사라진다.
-해결: 원본 레포에서 수정하라.
-
-### submodule 초기화 없이 클론한다
-
-```bash
-git clone --recurse-submodules [repo-url]
-# 또는
-git submodule update --init --recursive
-```
 
 ---
 

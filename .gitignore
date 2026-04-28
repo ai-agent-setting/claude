@@ -18,3 +18,5 @@ mcp-needs-auth-cache.json
 *.log
 __pycache__/
 .DS_Store
+image-cache/
+logs/

@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-04-05 -->
+<!-- last-reviewed: 2026-04-27 -->
 # Skills 및 명령어 시스템
 
 Claude Code에서 반복적인 워크플로를 `/슬래시` 명령으로 재사용할 수 있다.
@@ -34,8 +34,13 @@ Claude Code에서 반복적인 워크플로를 `/슬래시` 명령으로 재사�
 
 ```markdown
 ---
-name: my-skill
+name: my-skill          # lowercase·숫자·하이픈만 허용, 최대 64자
 description: 이 스킬이 하는 일 (Claude가 자동 실행 여부 판단에 사용)
+when_to_use: 사용자가 X를 요청할 때 자동 활성화 조건 (description과 합산 1,536자 cap)
+arguments:              # 스킬이 받을 수 있는 인수 정의
+  - name: filepath
+    description: 리뷰할 파일 경로
+    required: true
 context: fork           # fork = 별도 컨텍스트에서 실행 (메인 대화 오염 방지)
 disable-model-invocation: false  # true = /skill-name 입력해도 자동 실행 안 됨
 allowed-tools:          # 이 스킬이 사용할 수 있는 도구 목록
@@ -44,7 +49,7 @@ allowed-tools:          # 이 스킬이 사용할 수 있는 도구 목록
 model: claude-opus-4-6  # 특정 모델 지정 (기본값: 현재 선택 모델)
 user-invocable: true    # false = 사용자가 직접 실행 불가 (다른 스킬에서만 호출 가능)
 argument-hint: "[파일경로] [옵션]"  # 자동완성 시 표시될 힌트
-effort: medium          # 노력 수준: low / medium / high / max
+effort: medium          # 노력 수준: low / medium / high / xhigh / max
 agent: general-purpose  # context: fork 시 사용할 서브에이전트 타입
 hooks:                  # 스킬 생명주기 훅
   before: "echo 'starting'"
@@ -96,6 +101,23 @@ Claude Code에 기본 포함된 스킬들:
 → $ARGUMENTS[0] = "main"   ($1 단축형 동일)
 → $ARGUMENTS[1] = "production"  ($2 단축형 동일)
 ```
+
+---
+
+## 스킬 컨텍스트 예산
+
+compaction 후에도 스킬은 유지되지만 토큰 예산이 제한된다:
+- 스킬 하나당 최대 **5,000 토큰**
+- 전체 스킬 합산 최대 **25,000 토큰**
+
+긴 스킬은 companion file로 내용을 분리하고 SKILL.md에서 참조하라.
+
+---
+
+## 라이브 변경 감지
+
+SKILL.md 파일을 수정하면 세션 재시작 없이 즉시 반영된다.
+개발 중 스킬을 반복 수정할 때 활용할 수 있다.
 
 ---
 
@@ -218,6 +240,20 @@ context: fork
 
 위 변경사항을 리뷰하라.
 ```
+
+---
+
+## Shell Injection 비활성화
+
+보안상 shell injection을 막고 싶으면 settings.json에 추가:
+
+```json
+{
+  "disableSkillShellExecution": true
+}
+```
+
+이 설정이 켜지면 `` !`command` `` 문법이 실행되지 않고 그대로 텍스트로 처리된다.
 
 ---
 

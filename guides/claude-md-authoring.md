@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-04-05 -->
+<!-- last-reviewed: 2026-04-27 -->
 # CLAUDE.md 효과적으로 작성하는 방법
 
 CLAUDE.md는 Claude Code가 프로젝트를 열 때 자동으로 읽는 지시 파일이다.
@@ -66,6 +66,12 @@ CLAUDE.md에서 `@path/to/file` 구문으로 다른 파일을 임포트할 수 �
 
 > 외부 임포트는 첫 사용 시 Claude Code가 승인 다이얼로그를 표시한다.
 
+### @import 경로 해석 규칙
+
+- 경로는 **작업 디렉터리 기준이 아닌 해당 파일 위치 기준**으로 해석된다.
+- 재귀 임포트는 최대 **5단계**까지 허용된다.
+- `@import`는 파일 구조를 정리하는 효과만 있고 컨텍스트 절감 효과는 없다. 컨텍스트를 줄이려면 path-scoped rules를 활용하라.
+
 ### AGENTS.md 호환 패턴
 
 다른 에이전트가 `AGENTS.md`를 사용하는 경우, CLAUDE.md에서 임포트하여 중복 없이 활용할 수 있다.
@@ -100,6 +106,12 @@ CLAUDE.md에서 `@path/to/file` 구문으로 다른 파일을 임포트할 수 �
 └── rules/
     ├── personal-style.md   # 개인 코딩 스타일
     └── workflow.md         # 개인 워크플로 규칙
+```
+
+symlink를 활용하면 여러 프로젝트에서 같은 rules 파일을 공유할 수 있다:
+
+```bash
+ln -s ~/shared-rules/security.md .claude/rules/security.md
 ```
 
 ### Path-specific rules (경로별 조건부 규칙)

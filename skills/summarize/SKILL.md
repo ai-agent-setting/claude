@@ -1,6 +1,12 @@
 ---
 name: summarize
 description: 파일, 변경사항, 또는 코드베이스 일부를 요약한다
+context: fork
+allowed-tools:
+  - Read
+  - Bash
+  - Grep
+  - Glob
 ---
 
 $ARGUMENTS 를 요약하라.

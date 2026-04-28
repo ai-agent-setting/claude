@@ -5,7 +5,7 @@ context: fork
 allowed-tools:
   - Read
   - WebFetch
-disable-model-invocation: false
+disable-model-invocation: false  # 의도적: 사용자가 /update-guides를 명시적으로 호출해야 하는 스킬이지만, WebFetch 외부 접근이 필요하여 자동 실행을 허용함
 ---
 
 $ARGUMENTS 관련 가이드를 업데이트하라.
