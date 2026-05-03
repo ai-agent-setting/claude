@@ -1,11 +1,11 @@
-<!-- last-reviewed: 2026-04-27 -->
-# 컨텍스트 윈도우 및 메모리 관리
+<!-- last-reviewed: 2026-05-03 -->
+# Context Window and Memory Management
 
-Claude Code에는 두 가지 메모리 시스템이 있다:
-- **CLAUDE.md**: 내가 직접 작성하는 지속 지침 파일
-- **Auto Memory**: Claude가 세션 경험을 바탕으로 자동으로 작성하는 노트
+Claude Code has two memory systems:
+- **CLAUDE.md**: Persistent instruction files you write manually
+- **Auto Memory**: Notes Claude writes automatically based on session experience
 
-> 참고: 공식 문서 → https://code.claude.com/docs/en/memory
+> Reference: https://code.claude.com/docs/en/memory
 
 ---
 
@@ -13,53 +13,54 @@ Claude Code에는 두 가지 메모리 시스템이 있다:
 
 | | CLAUDE.md | Auto Memory |
 |---|---|---|
-| 작성자 | 사람 | Claude |
-| 내용 | 지침과 규칙 | 학습 내용과 패턴 |
-| 로드 방식 | 루트 CLAUDE.md는 세션마다 전체 로드. 하위 디렉터리 CLAUDE.md는 on-demand 로드 | 세션마다 상위 200줄 또는 25KB 중 먼저 도달하는 것 로드 |
-| 전달 방식 | 시스템 프롬프트가 아닌 사용자 메시지로 전달됨 | — |
-| 용도 | 코딩 표준, 워크플로, 아키텍처 | 빌드 명령, 디버깅 인사이트 |
+| Author | Human | Claude |
+| Content | Rules and instructions | Learned patterns and preferences |
+| Load method | Root CLAUDE.md: fully loaded every session. Subdirectory CLAUDE.md: loaded on demand | Top 200 lines or 25 KB (whichever comes first) loaded per session |
+| Delivery | As a user message after the system prompt (not part of the system prompt itself) | — |
+| Use cases | Coding standards, workflows, architecture | Build commands, debugging insights |
+
+CLAUDE.md content is delivered as a user message, so strict compliance is not guaranteed — Claude treats it as strong guidance, not a hard constraint.
 
 ---
 
-## Auto Memory (자동 메모리)
+## Auto Memory
 
-Claude가 교정 내용, 선호도, 빌드 명령, 디버깅 패턴을 스스로 저장한다.
-미래 대화에 유용할 것이라 판단할 때만 저장한다.
+Claude automatically stores corrections, preferences, build commands, and debugging patterns. It saves only what it judges useful for future conversations.
 
-### 저장 위치
+**Requires Claude Code v2.1.59 or later.** Check your version: `claude --version`.
+
+### Storage Location
 
 ```
 ~/.claude/projects/<project>/memory/
-├── MEMORY.md              # 인덱스 파일 (세션 시작 시 상위 200줄 또는 25KB 로드)
-├── debugging.md           # 디버깅 패턴
-└── api-conventions.md     # API 설계 결정
+├── MEMORY.md              # Index file (top 200 lines or 25 KB loaded at session start)
+├── debugging.md           # Debugging patterns
+└── api-conventions.md     # API design decisions
 ```
 
-`<project>` 경로는 git 레포를 기준으로 파생된다.
-- git 레포 밖에 있으면 프로젝트 루트 경로를 사용한다.
-- git worktree와 서브디렉터리는 모두 같은 auto memory 디렉터리를 공유한다.
+`<project>` is derived from the git repo root.
+- Outside a git repo, the project root path is used.
+- Git worktrees and subdirectories share the same auto memory directory.
 
-`MEMORY.md`의 상위 200줄 또는 25KB(먼저 도달하는 기준) 만큼 세션마다 자동 로드된다.
-나머지 파일은 Claude가 필요 시 on-demand로 읽는다.
+Only `MEMORY.md` (up to 200 lines or 25 KB) is auto-loaded each session. Other files are read by Claude on demand.
 
-### Auto Memory 관리
+### Managing Auto Memory
 
 ```
-/memory    # 로드된 파일 목록 + auto memory 토글 + auto memory 폴더 열기 링크
+/memory    # View loaded files + toggle auto memory + open memory folder
 ```
 
-`/memory` 명령으로 할 수 있는 것:
-- 현재 로드된 CLAUDE.md, CLAUDE.local.md, rules 파일 목록 확인
-- Auto Memory 활성화/비활성화 토글
-- Auto memory 폴더 열기 링크
-- 파일 선택 시 에디터에서 열기
+`/memory` lets you:
+- See which CLAUDE.md, CLAUDE.local.md, and rules files are loaded
+- Toggle auto memory on/off
+- Open the memory folder
+- Click a file to open it in your editor
 
-Auto Memory는 plain markdown이므로 언제든 직접 편집·삭제할 수 있다.
+Auto memory files are plain markdown — edit or delete them at any time.
 
-### Auto Memory 저장 위치 변경
+### Custom Storage Location
 
-`autoMemoryDirectory` 설정으로 저장 경로를 변경할 수 있다.
-이 설정은 user/local settings에서만 허용되며 project settings에서는 설정 불가.
+Change the storage path with `autoMemoryDirectory`. Accepted in policy, local, and user settings. **Not accepted in project settings** (`.claude/settings.json`) to prevent a shared project from redirecting auto memory writes to sensitive locations.
 
 ```json
 {
@@ -67,96 +68,96 @@ Auto Memory는 plain markdown이므로 언제든 직접 편집·삭제할 수 �
 }
 ```
 
-### Auto Memory 끄기
+### Disabling Auto Memory
 
-settings.json에 추가:
 ```json
 {
   "autoMemoryEnabled": false
 }
 ```
 
-또는 환경 변수: `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`
+Or via environment variable: `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`
 
 ---
 
-## CLAUDE.md 크기 가이드라인
+## CLAUDE.md Size Guidelines
 
-공식 권장: 파일당 200줄 이내.
+Official recommendation: keep each file under 200 lines.
 
-| 프로젝트 규모 | 전략 |
+| Project size | Strategy |
 |---|---|
-| 소형 (문서, 학습) | 루트 CLAUDE.md 100줄 이내 |
-| 중형 (일반 웹앱) | 루트 150줄 + `.claude/rules/` 분리 |
-| 대형 (복잡한 시스템) | 루트 CLAUDE.md 간결히 + path-specific rules로 분산 |
+| Small (docs, learning) | Root CLAUDE.md under 100 lines |
+| Medium (typical web app) | Root 150 lines + split into `.claude/rules/` |
+| Large (complex systems) | Concise root CLAUDE.md + distribute via path-specific rules |
 
-### CLAUDE.md HTML 주석 활용
+### HTML Comments in CLAUDE.md
 
-CLAUDE.md 내 block-level HTML 주석(`<!-- -->`)은 컨텍스트 주입 전 자동으로 제거된다.
-메타 정보나 주석을 남기되 Claude에게 전달하지 않을 때 활용한다.
+Block-level HTML comments (`<!-- -->`) are stripped before content is injected into context. Use them for metadata that Claude should not see.
 
 ```markdown
-<!-- last-reviewed: 2026-04-27 -->
-<!-- 이 섹션은 백엔드 팀 전용입니다. 프론트엔드 개발 시 무시. -->
-# 프로젝트 지침
+<!-- last-reviewed: 2026-05-03 -->
+<!-- This section is for the backend team only. Ignore if working on frontend. -->
+# Project Instructions
 ```
 
-> 주의: 코드블록 내 주석은 그대로 보존된다.
+> Note: comments inside code blocks are preserved as-is.
 
 ---
 
-## 컨텍스트 윈도우 관리
+## Context Window Management
 
-### `/clear` 가장 강력한 도구
-
-```
-/clear    # 컨텍스트 완전 초기화 (CLAUDE.md는 재로드됨)
-```
-
-사용 시기:
-- 무관한 작업으로 전환할 때
-- Claude가 같은 실수를 두 번 이상 반복할 때
-- 응답이 점점 모호·일반적이 될 때
-
-### `/compact` 핵심만 남기고 압축
+### `/clear` — Most Powerful Reset
 
 ```
-/compact                         # 자동 압축
-/compact API 변경사항에 집중      # 지침 포함 압축
+/clear    # Fully reset context (CLAUDE.md is reloaded)
 ```
 
-자동 compaction은 컨텍스트가 95% 찰 때 트리거된다.
+When to use:
+- Switching to an unrelated task
+- Claude repeats the same mistake after two corrections
+- Responses are becoming increasingly vague or generic
 
-`/compact` 후 루트 CLAUDE.md는 자동으로 재주입되지만, 하위 디렉터리의 CLAUDE.md는 재주입되지 않는다. compaction 이후에도 하위 rules가 유지되어야 한다면 루트 CLAUDE.md에 핵심 내용을 포함시켜라.
+### `/compact` — Compress While Keeping Essentials
 
-CLAUDE.md에 compaction 지침을 추가하면 압축 시 보존할 내용을 제어할 수 있다:
+```
+/compact                          # Auto-compress
+/compact focus on API changes     # Compress with a hint
+```
+
+Auto-compaction triggers when context reaches 95% capacity.
+
+After `/compact`, the root CLAUDE.md is re-injected automatically. Nested subdirectory CLAUDE.md files are **not** re-injected automatically — they reload the next time Claude reads a file in that subdirectory. If subdirectory rules must survive compaction, include the key content in root CLAUDE.md.
+
+To control what is preserved during compaction, add a compaction directive to CLAUDE.md:
 
 ```markdown
-<!-- compaction 지침 -->
+<!-- compaction instructions -->
 When compacting, always preserve:
 - The full list of modified files
 - Current task progress and next steps
 ```
 
-### `/rewind` 체크포인트로 되돌리기
+### Partial Compaction
 
-Claude가 변경할 때마다 자동으로 체크포인트가 생성된다.
-`Esc + Esc` 또는 `/rewind`로 체크포인트 메뉴를 열 수 있다.
+To compact only part of the conversation: press `Esc + Esc` (or run `/rewind`), select a message checkpoint, and choose **Summarize from here**. Only the conversation from that point forward is compressed.
 
-복원 옵션 4가지:
-1. **대화만 복원** — 코드 변경은 유지하고 대화 히스토리만 되감기
-2. **코드만 복원** — 대화는 유지하고 파일만 체크포인트 시점으로 복원
-3. **둘 다 복원** — 대화와 코드 모두 체크포인트 시점으로 복원
-4. **선택 메시지부터 요약** — 특정 시점 이후를 압축하여 요약
+### `/rewind` — Restore to Checkpoint
 
-> 체크포인트는 세션 종료 후에도 유지된다.
+Claude creates a checkpoint automatically on every change. Open the checkpoint menu with `Esc + Esc` or `/rewind`.
+
+Restore options:
+1. **Conversation only** — rewind history, keep file changes
+2. **Files only** — revert files, keep conversation
+3. **Both** — revert files and conversation to the checkpoint
+4. **Summarize from here** — compress everything from the selected message forward
+
+> Checkpoints persist after the session ends.
 
 ---
 
-## 추가 디렉터리 CLAUDE.md 로드
+## Loading Additional Directory CLAUDE.md
 
-`--add-dir`로 추가한 디렉터리의 CLAUDE.md는 기본적으로 로드되지 않는다.
-로드하려면 환경변수를 설정해야 한다:
+CLAUDE.md files in directories added with `--add-dir` are not loaded by default. To load them:
 
 ```bash
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir /other/project
@@ -164,38 +165,27 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir /other/project
 
 ---
 
-## 세션 재개
+## System-prompt Level Instructions
+
+For instructions that must be delivered at the system prompt level (not as a user message), use `--append-system-prompt`. This is suited for scripts and automation that run Claude non-interactively:
 
 ```bash
-claude --continue    # 최근 대화 재개
-claude --resume      # 대화 목록에서 선택
+claude --append-system-prompt "Always respond in JSON format."
 ```
 
 ---
 
-## 컨텍스트 리셋이 필요한 신호
+## Session Resume
 
-- Claude가 앞서 정한 규칙을 어기기 시작할 때
-- 응답이 점점 일반적·모호해질 때
-- 같은 오류를 두 번 이상 교정했을 때
+```bash
+claude --continue    # Resume the most recent conversation
+claude --resume      # Pick from a list of conversations
+```
 
 ---
 
-## 문제 해결
+## Signals to Reset Context
 
-### 어떤 instruction 파일이 로드됐는지 확인
-
-`InstructionsLoaded` 훅을 사용하면 어떤 파일이 언제 로드됐는지 로깅할 수 있다.
-path-specific rules 디버깅에 유용하다.
-
-```json
-{
-  "hooks": {
-    "InstructionsLoaded": [
-      {
-        "command": "echo \"Loaded: $CLAUDE_INSTRUCTION_PATH\" >> /tmp/claude-instructions.log"
-      }
-    ]
-  }
-}
-```
+- Claude starts breaking rules established earlier in the session
+- Responses become increasingly vague or generic
+- The same error has been corrected twice without success

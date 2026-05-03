@@ -1,123 +1,125 @@
-<!-- last-reviewed: 2026-04-27 -->
-# 서브에이전트 (Subagents)
+<!-- last-reviewed: 2026-05-03 -->
+# Subagents
 
-서브에이전트는 별도 컨텍스트 윈도우에서 독립적으로 실행되는 Claude 인스턴스다.
-메인 대화를 오염시키지 않고 복잡하고 긴 조사 작업을 위임할 수 있다.
+A subagent is a separate Claude instance running in its own context window.
+Use subagents to delegate complex or lengthy investigations without polluting the main conversation.
 
-> 참고: 공식 문서 → https://code.claude.com/docs/en/sub-agents
+> Reference: https://code.claude.com/docs/en/sub-agents
 
 ---
 
-## 왜 서브에이전트를 사용하나?
+## Why Use Subagents?
 
-| 문제 | 서브에이전트 해결 |
+| Problem | How Subagents Help |
 |---|---|
-| 코드베이스 전체 분석이 컨텍스트를 소비 | 별도 컨텍스트로 분석, 요약만 반환 |
-| 여러 독립 작업을 순차적으로 처리 | 병렬로 서브에이전트 실행 |
-| 리뷰어가 작성자 코드에 편향 | 별도 컨텍스트의 Claude가 편향 없이 리뷰 |
+| Full-codebase analysis consumes main context | Analyze in a separate context, return only the summary |
+| Multiple independent tasks run sequentially | Run subagents in parallel |
+| Reviewer is biased toward code they just wrote | A fresh context gives an unbiased review |
 
 ---
 
-## 서브에이전트 실행 방법
+## How to Invoke Subagents
 
-Claude에게 자연어로 요청하면 된다:
+Ask Claude in natural language:
 
 ```
-인증 시스템이 토큰 갱신을 어떻게 처리하는지 서브에이전트를 사용해 조사하라.
-요약 보고서만 메인 대화에 반환하라.
+Investigate how the auth system handles token refresh using a subagent.
+Return only a summary report to the main conversation.
 ```
 
-또는 Skills의 `context: fork` 옵션으로 자동 포크:
+Or use the `context: fork` option in a skill to fork automatically:
 
 ```yaml
 ---
 context: fork
-agent: Explore   # 내장 에이전트 타입 지정 (선택)
+agent: Explore   # optional: specify a built-in agent type
 ---
 ```
 
-### 내장 에이전트 타입
+### Built-in Agent Types
 
-`context: fork` 스킬의 `agent` 필드에 지정할 수 있는 내장 타입:
-
-| 타입 | 설명 |
+| Type | Description |
 |---|---|
-| `general-purpose` | 범용 에이전트. 기본값 |
-| `Explore` | 코드베이스 탐색 전문. 빠른 파일/패턴 검색에 최적화 |
-| `Plan` | 소프트웨어 아키텍처 설계 전문. 구현 계획 수립에 적합 |
+| `general-purpose` | General agent. Default. |
+| `Explore` | Optimized for fast file and pattern search in a codebase |
+| `Plan` | Specialized for software architecture and implementation planning |
 
 ---
 
-## 커스텀 서브에이전트 (`.claude/agents/`)
+## Custom Subagents (`.claude/agents/`)
 
-반복적으로 사용하는 서브에이전트를 파일로 정의할 수 있다.
+Define reusable subagents as files.
 
-### 파일 형식 (단일 파일 방식)
+### File Format (Single-file, Recommended)
 
 ```
 .claude/
 └── agents/
-    ├── code-reviewer.md       # 단일 파일 형식 (권장)
+    ├── code-reviewer.md       # single-file format (recommended)
     └── security-auditor.md
 ```
 
-각 파일은 YAML frontmatter + 지침 본문으로 구성된다:
+Each file is YAML frontmatter + instruction body:
 
 ```markdown
 ---
 name: code-reviewer
-description: 독립적인 관점에서 코드 리뷰를 수행하는 서브에이전트
+description: Performs an independent code review from a fresh perspective
 tools:
   - Read
   - Bash
-model: claude-sonnet-4-6
-skills:                  # 이 에이전트가 시작 시 프리로드할 스킬 목록
+model: sonnet              # Short form: opus / sonnet / haiku
+skills:                    # Skills to preload at startup
   - review
   - summarize
 ---
 
-$ARGUMENTS 파일을 독립적으로 리뷰하라.
+Independently review $ARGUMENTS.
 
-다음을 검토하라:
-- 버그 및 논리 오류
-- 보안 취약점
-- 성능 문제
-- CLAUDE.md 코드 규칙 준수 여부
+Check for:
+- Bugs and logic errors
+- Security vulnerabilities
+- Performance issues
+- Compliance with CLAUDE.md conventions
 
-결과를 구조화된 보고서로 반환하라.
+Return a structured report.
 ```
 
-> 참고: `.claude/agents/<name>/SKILL.md` 형식도 하위 호환되지만 단일 파일 형식(`.claude/agents/<name>.md`)을 권장한다.
+> Note: `.claude/agents/<name>/SKILL.md` format is backward-compatible but the single-file format (`.claude/agents/<name>.md`) is recommended.
+
+### Preloaded Skills Behavior
+
+Subagents with `skills` in their frontmatter work differently from normal sessions: the **full skill content is injected at startup**, not just the description. This means the skill's instructions are immediately available without an explicit invocation.
+
+For memory persistence, subagents can maintain their own auto memory. See [memory-and-context.md](memory-and-context.md) for details.
 
 ---
 
-## Agent Teams (에이전트 팀)
+## Agent Teams
 
-복잡한 작업은 여러 서브에이전트를 조합하여 처리할 수 있다.
-
-예시 워크플로:
+Complex tasks can be split across multiple subagents:
 
 ```
-1. 탐색 에이전트: 관련 파일 목록 파악
-2. 분석 에이전트: 각 파일의 의존관계 분석
-3. 계획 에이전트: 변경 계획 작성
-→ 메인 에이전트: 계획 검토 후 구현
+1. Explorer agent:  identify relevant files
+2. Analyzer agent:  analyze dependencies in each file
+3. Planner agent:   draft a change plan
+→ Main agent:       review the plan and implement
 ```
 
-Claude에게 다음과 같이 요청:
+Prompt Claude:
 
 ```
-이 작업을 여러 서브에이전트로 분할하라:
-1. 첫 번째 에이전트: 인증 관련 파일 목록 작성
-2. 두 번째 에이전트: 각 파일의 현재 구현 요약
-3. 결과를 합쳐서 마이그레이션 계획 작성
+Split this task across multiple subagents:
+1. First agent: list authentication-related files
+2. Second agent: summarize the current implementation in each file
+3. Combine the results and write a migration plan
 ```
 
 ---
 
-## 주의사항
+## Notes
 
-- 서브에이전트는 메인 대화의 컨텍스트를 공유하지 않는다. 필요한 컨텍스트를 명시적으로 전달하라.
-- `context: fork` 스킬은 자동으로 서브에이전트로 실행된다.
-- 서브에이전트 결과는 메인 대화에 요약본으로 돌아온다.
-- 서브에이전트도 자체 auto memory를 유지할 수 있다. 지속적인 학습이 필요한 에이전트에 활용하라.
+- Subagents do not share the main conversation's context — pass all needed context explicitly.
+- `context: fork` skills run automatically as subagents.
+- Subagent results return to the main conversation as a summary.
+- Subagents can maintain their own auto memory for persistent learning across sessions.

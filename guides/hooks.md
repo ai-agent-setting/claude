@@ -1,41 +1,51 @@
-<!-- last-reviewed: 2026-04-05 -->
-# Hooks (생명주기 훅)
+<!-- last-reviewed: 2026-05-03 -->
+# Hooks (Lifecycle Hooks)
 
-Hooks를 사용하면 Claude Code의 특정 이벤트에 반응하여 자동으로 명령을 실행할 수 있다.
+Hooks let you run shell commands automatically in response to specific Claude Code events.
 
-> 참고: 공식 문서 → https://code.claude.com/docs/en/hooks
-
----
-
-## Hooks란?
-
-자동으로 실행되는 커맨드라인 스크립트.
-
-예시 활용:
-- 모든 파일 수정 후 자동 포맷터 실행
-- 세션 시작 시 환경 확인
-- 특정 파일 수정 시 알림
-- 어떤 instruction 파일이 로드됐는지 로깅
+> Reference: https://code.claude.com/docs/en/hooks
 
 ---
 
-## settings.json에 Hooks 설정
+## What Are Hooks?
+
+Shell commands that fire automatically at defined lifecycle points.
+
+Common uses:
+- Run a formatter after every file edit
+- Check environment at session start
+- Send notifications when Claude finishes a response
+- Block context compaction and prompt the user to checkpoint
+
+---
+
+## Configuration in settings.json
 
 ```json
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "hooks": {
-    "SessionStart": [
+    "PostToolUse": [
       {
-        "command": "echo 'Claude 세션 시작'",
-        "timeout": 5000
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write $CLAUDE_FILE_PATH",
+            "timeout": 15000
+          }
+        ]
       }
     ],
-    "PostEdit": [
+    "Stop": [
       {
-        "command": "npm run lint --fix",
-        "timeout": 30000,
-        "filePattern": "**/*.ts"
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Response complete\" with title \"Claude Code\"'"
+          }
+        ]
       }
     ]
   }
@@ -44,134 +54,218 @@ Hooks를 사용하면 Claude Code의 특정 이벤트에 반응하여 자동으�
 
 ---
 
-## 지원 이벤트
+## Supported Events
 
-| 이벤트 | 트리거 시점 |
+| Event | Fires When |
 |---|---|
-| `SessionStart` | Claude Code 세션 시작 시 |
-| `PostEdit` | Claude가 파일을 저장한 후 |
-| `PostBash` | Claude가 Bash 명령을 실행한 후 |
-| `InstructionsLoaded` | instruction 파일(CLAUDE.md, rules 등)이 로드될 때 |
+| `PreToolUse` | Before any tool call |
+| `PostToolUse` | After any tool call completes |
+| `Notification` | Claude is waiting for input or permission |
+| `Stop` | Claude finishes a response turn |
+| `PreCompact` | Before context compaction is triggered |
+| `SessionStart` | A new Claude Code session begins |
 
-### InstructionsLoaded 활용
+### Matcher Field
 
-path-specific rules 디버깅이나 어떤 파일이 언제 로드됐는지 추적할 때 유용하다.
+`PreToolUse` and `PostToolUse` support a `matcher` to filter by tool name:
 
 ```json
 {
-  "hooks": {
-    "InstructionsLoaded": [
-      {
-        "command": "echo \"Loaded: $CLAUDE_INSTRUCTION_PATH\" >> /tmp/claude-instructions.log"
-      }
-    ]
-  }
+  "matcher": "Edit|Write",   // pipe-separated tool names
+  "hooks": [{ "type": "command", "command": "..." }]
+}
+```
+
+Leave `matcher` empty (`""`) to match all tools.
+
+---
+
+## Hook Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `type` | string | `"command"` for shell commands; `"http"` for webhooks |
+| `command` | string | Shell command to run (for type `"command"`) |
+| `url` | string | Webhook URL (for type `"http"`) |
+| `timeout` | number | Timeout in milliseconds (default: 10000) |
+
+---
+
+## HTTP Hooks
+
+Send a POST request to a webhook URL instead of running a local command.
+
+```json
+{
+  "PostToolUse": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "http",
+          "url": "https://hooks.example.com/claude-events"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Allowed URLs and exposed environment variables must be whitelisted in settings:
+
+```json
+{
+  "allowedHttpHookUrls": ["https://hooks.example.com/*"],
+  "httpHookAllowedEnvVars": ["MY_TOKEN"]
 }
 ```
 
 ---
 
-## Hook 필드
+## Exit Codes
 
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| `command` | string | 실행할 쉘 명령어 |
-| `timeout` | number | 밀리초 단위 타임아웃 (기본값: 10000) |
-| `filePattern` | string | PostEdit 전용. 이 패턴에 맞는 파일만 트리거 |
+| Exit Code | Meaning |
+|---|---|
+| `0` | Success — proceed normally |
+| Non-zero | Warning shown to Claude, but execution continues |
+| `2` | Block the operation and pass the hook's stdout as feedback to Claude |
+
+Use `exit 2` in `PreCompact` to block auto-compaction and prompt the user.
 
 ---
 
-## 스킬 내 훅 (Skill-level Hooks)
+## Skill-level Hooks
 
-SKILL.md frontmatter의 `hooks` 필드로 스킬 생명주기에 훅을 설정할 수 있다.
+Hooks defined in SKILL.md frontmatter run only when that skill executes:
 
 ```markdown
 ---
 name: deploy
-description: 애플리케이션 배포
+description: Deploy the application
 hooks:
-  before: "echo '배포 시작' | slack-notify"
-  after: "echo '배포 완료' | slack-notify"
+  before: "echo 'Deploy starting' | slack-notify"
+  after: "echo 'Deploy complete' | slack-notify"
 ---
 
-배포 스크립트를 실행하라.
+Run the deploy script.
 ```
 
-스킬 훅 vs settings.json 훅:
-- 스킬 훅: 해당 스킬 실행 시에만 동작
-- settings.json 훅: 모든 세션/편집에 전역 적용
+Skill hooks vs settings.json hooks:
+- Skill hooks: fire only for that specific skill
+- settings.json hooks: apply globally to all sessions
 
 ---
 
-## 실용적인 예시
+## Disabling Hooks
 
-### 자동 포맷터 (TypeScript/JavaScript)
+Disable all hooks at once (useful for debugging):
 
 ```json
 {
-  "hooks": {
-    "PostEdit": [
-      {
-        "command": "npx prettier --write $CLAUDE_FILE_PATH",
-        "timeout": 15000,
-        "filePattern": "**/*.{ts,tsx,js,jsx}"
-      }
-    ]
-  }
+  "disableAllHooks": true
 }
 ```
 
-### 자동 린트 (Python)
+In managed/enterprise environments, allow only approved hooks:
 
 ```json
 {
-  "hooks": {
-    "PostEdit": [
-      {
-        "command": "ruff check --fix $CLAUDE_FILE_PATH",
-        "timeout": 10000,
-        "filePattern": "**/*.py"
-      }
-    ]
-  }
-}
-```
-
-### 세션 시작 시 환경 확인
-
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "command": "node --version && npm --version",
-        "timeout": 5000
-      }
-    ]
-  }
-}
-```
-
-### Instruction 파일 로드 로깅
-
-```json
-{
-  "hooks": {
-    "InstructionsLoaded": [
-      {
-        "command": "echo \"$(date): $CLAUDE_INSTRUCTION_PATH\" >> ~/.claude/instruction-log.txt",
-        "timeout": 1000
-      }
-    ]
-  }
+  "allowManagedHooksOnly": true
 }
 ```
 
 ---
 
-## 주의사항
+## Practical Examples
 
-- Hook 실패(비 0 종료 코드)는 Claude에게 경고로 표시된다.
-- 너무 긴 Hook은 응답성을 저하시킨다. 타임아웃 적절히 설정.
-- `$CLAUDE_FILE_PATH` 환경 변수에 수정된 파일 경로가 들어온다.
-- Hook은 `.claude/settings.json` (프로젝트) 또는 `~/.claude/settings.json` (전역)에 설정 가능.
+### Auto-formatter (TypeScript)
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write $CLAUDE_FILE_PATH",
+            "timeout": 15000
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Auto-linter (Python)
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ruff check --fix $CLAUDE_FILE_PATH",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Completion Notification (macOS)
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Response complete\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Block Auto-compaction (Prompt to Checkpoint)
+
+```json
+{
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Context 70% — run /checkpoint\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Notes
+
+- Hook failures (non-zero exit) show as warnings to Claude but do not stop execution.
+- Long-running hooks degrade responsiveness — set timeouts appropriately.
+- `$CLAUDE_FILE_PATH` contains the path of the file being edited (PostToolUse with Edit/Write).
+- Hooks can be set in `.claude/settings.json` (project) or `~/.claude/settings.json` (global).
+- **No LLM calls inside hooks** — hooks run on every event and directly affect token cost.

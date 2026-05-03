@@ -1,21 +1,23 @@
-# 한국어 윤문 처방집 (Rewriting Playbook)
+# Korean Rewriting Playbook
 
-AI 티가 있는 한국어 텍스트를 고칠 때 따르는 전환 규칙집. `ai-tell-taxonomy.md`의 각 패턴별 처방을 실행 가능한 치환 레시피로 확장한다.
+Substitution recipes for removing AI-tell patterns. Reference: ai-tell-taxonomy.md.
 
-## 0. 대원칙
+## 0. Core Principles
 
-1. **의미 불변(Fidelity)**: 사실·주장·수치·고유명사·인용·인과관계는 글자 단위로 보존한다.
-2. **톤 유지(Tone Match)**: 입력이 격식체면 격식체로, 에세이면 에세이로. 장르를 바꾸지 않는다.
-3. **국소성(Locality)**: 문장을 한꺼번에 재작성하지 않는다. AI 티가 있는 구간만 수술적으로 고친다.
-4. **자연성 우선**: 과하게 문학적으로 고치지 않는다. 일상 한국어 필자의 중간값 리듬을 목표.
-5. **과윤문 경고**: 전체 문장의 50% 이상이 바뀌면 내용이 훼손됐을 가능성이 크다.
+1. **Fidelity**: Never alter facts, numbers, proper nouns, quoted text, or causal relationships.
+2. **Tone match**: Keep the genre register (formal → formal, essay → essay).
+3. **Locality**: Edit only the AI-tell span, not the whole sentence.
+4. **Naturalness**: Target the median rhythm of an everyday Korean writer — not literary.
+5. **Over-editing warning**: If >50% of sentences changed, content may be distorted.
 
-## 1. 카테고리별 치환 레시피
+---
 
-### A. 번역투 레시피
+## 1. Substitution Recipes by Category
 
-| 원문 패턴 | 윤문 예시 |
-|-----------|----------|
+### A. Translation-ese
+
+| Original | Rewritten |
+|----------|----------|
 | X에 대해 논의한다 | X를 논의한다 / X를 이야기한다 |
 | X를 통해 Y한다 | X로 Y한다 / X해서 Y한다 |
 | X에 있어서 | X에서 / X를 볼 때 |
@@ -25,99 +27,95 @@ AI 티가 있는 한국어 텍스트를 고칠 때 따르는 전환 규칙집. `
 | 경쟁력을 가지고 있다 | 경쟁력이 있다 / 경쟁력이 강하다 |
 | 판단되어진다 | 판단된다 / 판단한다 |
 | AI에 의해 생성된 | AI가 만든 |
-| 높일 수 있다 | 높인다 (사실 서술) / 높일 여지가 있다 (가능성) |
+| 높일 수 있다 | 높인다 (fact) / 높일 여지가 있다 (possibility) |
 | X을 위해 Y한다 | X하려고 Y한다 |
 | 합의가 이루어졌다 | 합의했다 |
 | 기술 발전 속도 가속화 | 기술의 발전 속도가 빨라진다 |
-| 그리고 (문두) | 삭제 / "-고" 연결어미로 압축 |
+| 그리고 (sentence-initial) | delete / compress with "-고" |
 
-### B. 영어 용어 번역표 (빈출)
+### B. English term translation (common)
 
-| 원어 | 한국어 |
-|------|--------|
-| pipeline | 파이프라인(유지 OK) / 흐름 / 공정 |
+| English | Korean |
+|---------|--------|
 | framework | 체계 / 틀 / 구조 |
 | leverage | 활용하다 / 끌어올리다 |
 | seamless | 매끄러운 / 끊김 없는 |
 | robust | 튼튼한 / 견고한 |
-| scalable | 확장성 있는 |
 | insight | 통찰 / 시사점 |
 | impact | 영향 / 파장 |
 | holistic | 전체적 / 총체적 |
 
-### C. 구조 레시피
+### C. Structure
 
-- **"첫째/둘째/셋째"**: 산문으로 녹이기. "A다. B도 마찬가지다. 여기에 C가 더해진다."
-- **불릿 → 산문**: "속도는 빠르고 비용도 낮다. 무엇보다 확장 여지가 크다."
-- **이모지**: 에세이·리포트 문맥에서 전량 제거.
-- **헤딩 아래 안내문**: 삭제.
+- **첫째/둘째/셋째**: prose → "A다. B도 마찬가지다. 여기에 C가 더해진다."
+- **Bullet → prose**: "속도는 빠르고 비용도 낮다. 무엇보다 확장 여지가 크다."
+- **Emoji**: remove all in essay/report context.
+- **Heading-summary box**: delete.
 
-### D. 관용구 처방 (삭제 우선)
+### D. Signature phrases (delete-first)
 
-| 삭제 대상 | 대안 |
-|----------|------|
-| 결론적으로 | 삭제 |
-| 요약하면 / 정리하자면 | 삭제 또는 "한 줄로 말하면" |
-| ~라고 할 수 있다 | ~이다 (단언 가능) / ~로 보인다 (관측) |
-| 매우 중요하다 | 구체 근거로 대체 |
-| 시사하는 바가 크다 | 삭제 |
-| 주목할 만하다 | 삭제 |
-| 혁신적인 / 획기적인 | 삭제 또는 "처음 시도한" / "이전과 다른" |
-| ~의 지평을 열다 | 삭제 후 실제 변화 서술 |
+| Delete | Alternative |
+|--------|------------|
+| 결론적으로 | delete |
+| 요약하면 / 정리하자면 | delete or "한 줄로 말하면" |
+| ~라고 할 수 있다 | ~이다 (if assertable) / ~로 보인다 (if observational) |
+| 매우 중요하다 | replace with specific evidence |
+| 시사하는 바가 크다 | delete |
+| 주목할 만하다 | delete |
+| 혁신적인 / 획기적인 | delete or "처음 시도한" / "이전과 다른" |
+| ~의 지평을 열다 | delete; describe actual change |
 
-### E. 리듬 처방
+### E. Rhythm
 
-- 단문(10~15자) 1~2개를 문단마다 투입: "맞다. 그게 핵심이다."
-- 종결어미 변주: "~다 / ~았다 / ~인 것 / 명사형 종결"을 섞음.
-- 4~5문장 연속 같은 종결어미 사용 금지.
+- Insert 1–2 short sentences (10–15 chars) per paragraph: "맞다. 그게 핵심이다."
+- Mix endings: ~다 / ~았다 / ~인 것 / noun-final.
+- Ban 4–5 consecutive identical endings.
 
-### F. 수식 처방
+### F. Modifiers
 
-- 정도부사("매우", "정말", "대단히") → 기본 90% 삭제.
-- 동의어 이중 수식 → 하나만.
-- "~적 / ~성 / ~화" → 구체 동사·명사로 풀기.
-  - "근본적 변화" → "뿌리부터 바뀐다"
-  - "구조적 문제" → "구조가 문제다"
+- 매우 / 정말 / 대단히 → delete 90%; use specific data instead.
+- Double synonyms → keep one.
+- ~적 / ~성 / ~화 → verb or concrete noun: "근본적 변화" → "뿌리부터 바뀐다"
 
-### G. Hedging 처방
+### G. Hedging
 
-- 단언 가능 지점에서 완곡 다운그레이드:
-  - "~할 수 있을 것으로 보인다" → "~로 보인다" → "~이다"
-- 사실이 모호할 때만 1단계 완곡 유지.
+- Downgrade where assertable: "~할 수 있을 것으로 보인다" → "~로 보인다" → "~이다"
+- Keep one hedge layer only when genuinely uncertain.
 
-### H. 접속사 처방
+### H. Conjunctions
 
-- 문두 접속사 3개 이상 연속 → 70% 삭제.
-- "또한" → 대부분 삭제. 필요하면 "여기에"·"더해"로 변주.
-- "하지만 / 그러나" 반복 → 교차 사용하거나 한쪽을 "그런데"로.
+- Sentence-initial 또한 → delete most; vary with "여기에" / "더해".
+- 하지만 / 그러나 repeated → alternate or replace with 그런데.
 
-### I. 형식명사 처방
+### I. Formal nouns
 
-- "것이다" 종결 → 종결어미 직결: "변화가 크다는 것이다" → "변화가 크다"
-- "~할 필요가 있다" → "~해야 한다"
-- "~이 필요하다" → 주어·동사로 구체화.
+- ~것이다 → ~이다 / ~다
+- ~할 필요가 있다 → ~해야 한다
+- ~이 필요하다 → specify subject + verb
 
-### J. 장식 처방
+### J. Decoration
 
-- **볼드**: 본문에서 거의 전량 제거.
-- **따옴표**: 인용·특수 용례에만 한정.
-- **대시(—)**: 1문서 1~2회 이하. 나머지는 쉼표·괄호·문장 분리.
+- **Bold** in body text → remove almost all.
+- Quotation marks → real quotes and special usage only.
+- Dash (—) → max 1–2 per doc; use comma/parenthesis/separate sentence.
 
-## 2. 어휘 대체 금지 (Do-NOT list)
+---
 
-의미가 바뀌므로 건드리지 않는다:
+## 2. Do-NOT alter
 
-- 전문 고유명사·제품명·모델명
-- 수치·단위·날짜
-- 직접 인용된 문장 (큰따옴표 내부)
-- 법률·규정 조문 인용
-- 학술 개념어 (확률적 앵무새, 창발 등)
+- Proper nouns, product names, model names
+- Numbers, units, dates
+- Directly quoted text (inside double quotation marks)
+- Legal or regulatory citations
+- Academic terms (확률적 앵무새, 창발, etc.)
 
-## 3. 장르별 미세 조정
+---
 
-| 장르 | 허용 | 금기 |
-|------|------|------|
-| 칼럼·에세이 | 단문, 개인 어조, 문학적 비유 | 이모지, 과한 헤딩, 불릿 남발 |
-| 리포트 | 헤딩 1단계, 통계·인용 | hype 어휘 |
-| 블로그 포스트 | 친근한 어조, 질문형 | 기계적 "첫째/둘째" 공식 |
-| 공적 연설·축사 | 격식체, 문어체 | 구어체·이모지·불릿 |
+## 3. Genre fine-tuning
+
+| Genre | Allowed | Forbidden |
+|-------|---------|-----------|
+| Column / Essay | short sentences, personal voice, literary analogy | emoji, heavy headings, excess bullets |
+| Report | 1-level headings, stats, citations | hype vocabulary |
+| Blog post | friendly tone, rhetorical questions | mechanical 첫째/둘째 pattern |
+| Formal speech | formal register, literary prose | colloquial, emoji, bullets |

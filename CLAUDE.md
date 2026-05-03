@@ -1,121 +1,81 @@
-# 전역 응답 규칙
+# Global Response Rules
 
-## 설정 검증 명령어
-
-이 저장소(`~/.claude`)의 변경사항을 검증할 때 사용하는 명령어:
+## Config Validation Commands
 
 ```bash
-# 설정 품질 전체 검토
-/review-claude-config ~/.claude
-
-# 가이드 최신성 감사
-/check-freshness
-
-# 특정 스킬 동작 확인
+/review-claude-config ~/.claude  # full quality review
+/check-freshness                 # audit guide freshness
 /review ~/.claude/skills/<name>/SKILL.md
 ```
 
+---
 
-## 작업 전 확인 (IMPORTANT)
+## Hook Authoring Rules (IMPORTANT)
 
-요청이 아래 중 하나라도 해당되면, 바로 실행하지 말고 AskUserQuestion으로 먼저 물어라:
+Hooks run on every event — they directly affect cumulative token cost.
 
-- 구현 방식이 둘 이상이고 선택에 따라 결과가 달라질 때
-- 범위가 불명확할 때 (어디까지 수정할지, 어느 파일에 적용할지 등)
-- 사용자의 선호나 제약을 모를 때 (포맷, 도구, 스타일 등)
-- 되돌리기 어려운 작업을 시작하기 전
+**No LLM calls.** Never call Claude API, `claude` CLI, or MCP tools inside a hook command.
 
-단, 아래 경우는 묻지 않고 바로 실행한다:
-- 요청이 명확하고 합리적 해석이 하나뿐일 때
-- 코드 수정 범위가 분명하고 영향이 제한적일 때
-- 이미 대화에서 충분한 맥락이 제공됐을 때
-
-"잘못 만들고 다시 하는 것"보다 "한 번 물어보고 제대로 만드는 것"이 낫다.
+Allowed: shell notifications (`osascript`, `say`), local file ops (`cat`, `grep`, `jq`), static scripts (no LLM inside), external webhooks via `curl`.
 
 ---
 
-## 한국어 AI 티 방지 (IMPORTANT)
+## Pre-task Confirmation (IMPORTANT)
 
-한국어로 답변하거나 한국어 텍스트를 작성할 때, 아래 분류 체계와 처방집을 반드시 따른다.
-자신의 출력을 생성하기 전에 AI 티 패턴을 자체 점검하고 제거한다.
+Use `AskUserQuestion` before acting when:
+- Two or more approaches exist and the choice changes the outcome
+- Scope is ambiguous (which files, how far to edit)
+- User preference or constraints are unknown
+- The action is hard to reverse
 
-- 분류 체계 (10대 카테고리 × 40+ 패턴): @rules/ai-tell-taxonomy.md
-- 윤문 처방집 (카테고리별 치환 레시피): @rules/rewriting-playbook.md
-
-### 핵심 원칙 요약
-
-**무조건 제거 (S1 — 한 번이라도 나오면 AI라고 확신하게 되는 패턴)**
-- "~에 대해", "~를 통해", "~에 있어서", "가지고 있다", "~되어진다" (번역투)
-- "첫째/둘째/셋째" 병렬 지배, 이모지 남발 (구조 패턴)
-- "결론적으로", "시사하는 바가 크다", "혁신적인", "~의 지평을 열다", "~시대가 도래했다" (AI 관용구)
-
-**밀도 기반 제거 (S2 — 3회+ 반복 시 제거)**
-- "~라는 점에서", "~와 관련하여", "~에 기반하여", "~에 의해", "~할 수 있다" 남발
-- 불릿 리스트 과잉, 반복 섹션 헤딩, 문단 문두 기계적 접속사
-- "매우/정말/대단히" 정도부사, 동의어 이중 수식
-- "것이다" 종결, "~할 필요가 있다", 과도한 hedging
-
-**문장 리듬 원칙**
-- 문장 길이를 불균일하게 유지한다. 짧은 문장(10~15자)과 긴 문장(80자+)을 섞는다.
-- 4~5문장 연속 같은 종결어미 금지. "~다 / ~았다 / ~인 것 / 명사형"을 섞는다.
-- 문두 접속사("또한", "따라서", "나아가", "아울러", "이는")를 남발하지 않는다.
-
-**내용 원칙**
-- 수치·고유명사·인용문은 절대 변경하지 않는다.
-- 불필요한 수식어를 걷어내고 구체 동사로 서술한다.
-- 장르(칼럼/리포트/블로그/공적 문서)에 맞는 어조를 유지한다.
+Act immediately when: request is unambiguous, scope is clear and limited, or enough context is already in the conversation.
 
 ---
 
-# 작업 로그 자동 기록 (IMPORTANT)
+## Korean Natural-Writing Rules (IMPORTANT)
 
-작업 중 아래 기준에 해당하면 반드시 해당 로그 파일에 기록한다. 사용자가 요청하지 않아도 자율적으로 판단해 작성한다.
+When writing or responding in Korean, apply the taxonomy and playbook. Self-check before generating output.
 
-## 저장 위치
+- Taxonomy (10 categories × 40+ patterns): @rules/ai-tell-taxonomy.md
+- Rewriting playbook: @rules/rewriting-playbook.md
 
-현재 작업 디렉터리로 판단한다:
-- `~/.claude` 하위 작업 (Claude Code 설정·스킬·가이드 수정 등) → `~/.claude/logs/`
-- 그 외 프로젝트 작업 → `[프로젝트 루트]/.claude/logs/`
+**Always-remove (S1):** ~에 대해 / ~를 통해 / ~에 있어서 / 가지고 있다 / ~되어진다 / 첫째·둘째·셋째 domination / emoji overuse / 결론적으로 / 시사하는 바가 크다 / 혁신적인 / ~의 지평을 열다
 
-## 기록 시점
+**Density-based (S2, remove at 3+):** ~라는 점에서 / ~와 관련하여 / ~에 기반하여 / ~에 의해 / ~할 수 있다 / excess bullets / mechanical sentence-opening conjunctions / 매우·정말·대단히 / ~것이다 / ~할 필요가 있다
 
-**Claude Code 관련 작업:**
-- 오류 발생 및 해결 시
-- 설정·스킬·가이드 파일을 도구로 수정할 때
+**Rhythm:** Vary sentence length (10–15 chars short + 80+ chars long). No 4–5 consecutive identical endings. Minimize 또한·따라서·나아가·아울러 at sentence starts.
 
-**프로젝트 작업:**
-- 오류 발생 및 해결 시
-- 중요하다고 판단되는 작업 완료 시 (새 기능 구현, 구조 변경, 의존성 추가, 버그 수정 등)
+**Content:** Never alter numbers, proper nouns, or quoted text. Use concrete verbs. Match genre register.
 
-## 파일 구조
+---
 
+## Auto Work Log (IMPORTANT)
+
+Write to log files autonomously — do not wait for user request.
+
+**Location:** `~/.claude` work → `~/.claude/logs/` | other projects → `[project-root]/.claude/logs/`
+
+**When:** errors + resolutions; config/skill/guide edits; significant completions (new feature, structural change, bug fix).
+
+**Files:**
 ```
 logs/
-  troubleshooting.md   # 오류 발생·원인·해결책
-  worklog.md           # 작업 요약·결정 사항
-  decisions.md         # 설계·구조적 결정과 근거
+  troubleshooting.md   # symptom · root cause · fix
+  worklog.md           # summary · decisions
+  decisions.md         # design decisions with rationale (high-reuse only)
 ```
 
-## 항목 형식
-
-파일에 항목을 추가할 때는 기존 내용 아래에 이어 쓴다(덮어쓰지 않는다).
-
+**Format** — append below existing content, never overwrite:
 ```markdown
-## YYYY-MM-DD — [한 줄 제목]
+## YYYY-MM-DD — [one-line title]
 
-[내용]
+[content]
 ```
-
-## 기록 내용 기준
-
-- **troubleshooting.md**: 오류 메시지 또는 증상, 원인 분석, 적용한 해결책
-- **worklog.md**: 수행한 작업 요약, 주요 결정 사항과 이유
-- **decisions.md**: 설계·아키텍처 결정, 대안과 선택 근거 (재사용 가치가 높은 것만)
 
 ---
 
-# 컨텍스트 관리 (IMPORTANT)
+## Context Management (IMPORTANT)
 
-대화가 체감상 매우 길어졌다고 판단되면, 답변 마지막에 아래 문장을 덧붙여 /checkpoint 실행을 권유하라:
+When the conversation feels very long, append at the end of the reply:
 
 > 대화가 많이 길어졌습니다. `/checkpoint`를 실행해 정리하고 새 세션으로 이어가는 것을 권장합니다.

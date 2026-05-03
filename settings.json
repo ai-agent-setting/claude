@@ -1,17 +1,24 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "effortLevel": "high",
-  "autoCompactWindow": 60000,
-  "autoMemoryEnabled": true,
-  "agentPushNotifEnabled": true,
   "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "touch /tmp/claude_code_modified"
+          }
+        ]
+      }
+    ],
     "PreCompact": [
       {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"컨텍스트 70% 도달 — /checkpoint 실행 권장\" with title \"Claude Code\"'; exit 2"
+            "command": "osascript -e 'display notification \"컨텍스트 70% 도달 — /checkpoint 실행 권장\" with title \"Claude Code\"'"
           }
         ]
       }
@@ -23,6 +30,10 @@
           {
             "type": "command",
             "command": "osascript -e 'display notification \"답변이 완료되었습니다\" with title \"Claude Code\"'"
+          },
+          {
+            "type": "command",
+            "command": "if [ -f /tmp/claude_code_modified ]; then rm /tmp/claude_code_modified && osascript -e 'display notification \"/codex:rescue 로 리뷰를 실행하세요\" with title \"Codex 리뷰 권장\"'; fi"
           }
         ]
       }
@@ -38,5 +49,19 @@
         ]
       }
     ]
-  }
+  },
+  "enabledPlugins": {
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "autoMemoryEnabled": true,
+  "agentPushNotifEnabled": true
 }

@@ -1,133 +1,133 @@
-<!-- last-reviewed: 2026-04-05 -->
-# Claude 프롬프트 엔지니어링 베스트 프랙티스
+<!-- last-reviewed: 2026-05-03 -->
+# Prompt Engineering Best Practices for Claude Code
 
-> 참고: 공식 문서 → https://code.claude.com/docs/en/best-practices
+> Reference: https://code.claude.com/docs/en/best-practices
 
 ---
 
-## 핵심 원칙: 검증 기준을 함께 제공하라
+## Core Principle: Provide Verification Criteria
 
-Claude가 스스로 작업을 검증할 수 있을 때 결과 품질이 극적으로 향상된다.
+Result quality improves dramatically when Claude can validate its own work.
 
-| 상황 | 나쁜 예 | 좋은 예 |
+| Situation | Weak | Strong |
 |---|---|---|
-| 함수 구현 | "이메일 유효성 검사 함수 구현해줘" | "validateEmail 구현. user@example.com → true. 구현 후 테스트 실행" |
-| 버그 수정 | "빌드 안 돼요" | "[에러 전문]. 수정 후 빌드 성공 확인. 근본 원인 해결" |
-| UI 변경 | "더 예쁘게 만들어" | "[스크린샷 첨부] 이 디자인 구현 후 스크린샷으로 비교" |
+| Implement a function | "Write an email validator" | "Implement validateEmail. user@example.com → true. Run tests after implementing." |
+| Fix a bug | "The build is broken" | "[Full error output]. Fix it, then confirm the build passes. Address the root cause." |
+| UI change | "Make it look better" | "[Screenshot attached] Implement this design, then take a screenshot to compare." |
 
 ---
 
-## 탐색 -> 계획 -> 구현 -> 커밋 워크플로
+## Explore → Plan → Implement → Commit Workflow
 
-### Plan Mode 활용
+### Using Plan Mode
 
 ```
-1단계 (Plan Mode): "src/auth 읽고 세션과 로그인 처리 방식을 이해하라"
-2단계 (Plan Mode): "Google OAuth 추가. 어떤 파일이 바뀌어야 해? 계획 세워라"
-3단계 (Normal Mode): "계획대로 OAuth 흐름 구현. 테스트 작성 후 실행"
-4단계 (Normal Mode): "설명적인 커밋 메시지로 커밋하고 PR 생성"
+Step 1 (Plan Mode): "Read src/auth and understand how sessions and login are handled."
+Step 2 (Plan Mode): "Add Google OAuth. Which files need to change? Write a plan."
+Step 3 (Normal Mode): "Implement the OAuth flow following the plan. Write and run tests."
+Step 4 (Normal Mode): "Commit with a descriptive message and open a PR."
 ```
 
-Plan Mode 진입 방법:
-- `Shift+Tab`으로 토글
-- 입력창 하단 메뉴에서 선택
-- `Ctrl+G`로 현재 계획을 에디터에서 직접 편집
+How to enter Plan Mode:
+- `Shift+Tab` to toggle
+- Select from the menu at the bottom of the input area
+- `Ctrl+G` to open the current plan in your text editor for direct editing before Claude proceeds
 
-Plan을 건너뛰어도 되는 경우: 한 문장으로 diff를 설명할 수 있는 작업.
+Skip the plan when: you can describe the full diff in one sentence.
 
 ---
 
-## 컨텍스트 제공
+## Providing Context
 
 ```
-@src/auth/login.ts 의 세션 처리 방식을 설명하라
+@src/auth/login.ts — explain how session handling works
 ```
 
-- 이미지 첨부: 스크린샷, 디자인 목업 직접 붙여넣기
-- URL 제공: 문서나 API 레퍼런스 URL 직접 제공
-- 파이프 입력: `cat error.log | claude`
+- **Images**: paste screenshots or design mockups directly
+- **URLs**: provide documentation or API reference URLs directly
+- **Pipe input**: `cat error.log | claude`
 
 ---
 
-## 효과적인 패턴
+## Effective Patterns
 
-### 역할 부여
-
-```
-너는 시니어 백엔드 개발자다. 아래 코드를 보안 관점에서 리뷰하라.
-```
-
-### 단계별 지시
+### Assign a Role
 
 ```
-다음 순서로 작업하라:
-1. 기존 코드의 문제점 파악
-2. 해결 방향 3가지 제시
-3. 가장 적합한 방향 선택 후 이유 설명
-4. 선택한 방향으로 코드 작성
+You are a senior backend engineer. Review the code below from a security perspective.
 ```
 
-### Claude 인터뷰 모드 (명세 먼저 작성)
+### Step-by-step Instructions
 
 ```
-[기능 설명]을 만들고 싶다.
-AskUserQuestion 도구를 사용해서 핵심 기술 구현, UI/UX, 엣지 케이스, 어려운 부분을 질문하라.
-완료 후 SPEC.md에 전체 명세를 작성하라.
+Work in this order:
+1. Identify problems in the existing code
+2. Propose three solutions
+3. Choose the best one and explain why
+4. Implement it
 ```
 
-`AskUserQuestion` 도구를 명시적으로 지정하면 Claude가 구조적으로 질문을 수집한다.
-명세 완성 후 새 세션에서 구현 (`claude --continue` 활용).
-
-### `/btw` 빠른 질문
-
-컨텍스트에 영향을 주지 않고 빠르게 질문할 수 있다.
-오버레이로 표시되며 대화 히스토리에 남지 않는다.
+### Claude Interview Mode (Spec-first)
 
 ```
-/btw 이 파일에서 사용된 패턴 이름이 뭐야?
+I want to build [feature description].
+Use the AskUserQuestion tool to ask me about key technical decisions, UI/UX, edge cases, and difficult parts.
+When done, write the full spec to SPEC.md.
 ```
+
+Explicitly naming `AskUserQuestion` makes Claude collect requirements in a structured way.
+After the spec is complete, implement in a new session (`claude --continue`).
+
+### `/btw` — Quick Questions Without Context Impact
+
+```
+/btw What design pattern is used in this file?
+```
+
+The answer appears in a dismissible overlay and never enters conversation history, so you can check details without growing context.
 
 ---
 
-## 안티패턴
+## Model Selection
 
-| 안티패턴 | 문제 | 개선 |
-|---|---|---|
-| "최선을 다해줘" | 기준 없음 | 구체적 기준 + 검증 조건 |
-| 모호한 용어 ("좋은", "깔끔한") | 해석이 다름 | 측정 가능한 기준 |
-| 검증 없이 결과만 요청 | 그럴듯한 오류를 놓침 | 테스트/스크린샷 등 검증 기준 제공 |
-| 범위 없이 "조사해줘" | 수백 개 파일 읽어 컨텍스트 소모 | 범위 좁게 지정 또는 서브에이전트 위임 |
-| 같은 오류를 두 번 이상 교정 | 컨텍스트가 실패로 오염 | `/clear` 후 더 구체적인 프롬프트로 재시작 |
+Use `/model` to see currently available models and switch between them.
 
----
+| Model tier | Best for |
+|---|---|
+| **Haiku** | Simple questions, fast code generation, straightforward transformations |
+| **Sonnet** | General coding tasks — balanced speed and quality (default) |
+| **Opus** | Complex reasoning, architecture design, tasks requiring deep thought |
 
-## 모델 선택 가이드
-
-작업 유형에 따라 모델을 구분하면 속도·비용·품질을 최적화할 수 있다.
-
-| 모델 | 사용 시점 | 예시 |
-|---|---|---|
-| **claude-haiku-4-5** | 간단한 질문, 빠른 코드 생성, 단순 변환 | 함수 이름 제안, 코드 포매팅, 오타 수정 |
-| **claude-sonnet-4-6** | 일반 코딩 작업, 속도와 품질의 균형 | 기능 구현, 버그 수정, 코드 리뷰 |
-| **claude-opus-4-6** | 복잡한 추론, 아키텍처 설계, 깊은 사고 필요 | 시스템 설계, 알고리즘 최적화, 복잡한 리팩터링 |
-
-SKILL.md에서 특정 스킬 실행 시 모델 고정:
+Pin a model for a specific skill in SKILL.md:
 
 ```yaml
-model: claude-opus-4-6   # 복잡한 분석 스킬에는 opus 지정
+model: opus   # short form: opus / sonnet / haiku
 ```
 
-> 기본값은 현재 선택된 모델이므로, 대부분의 작업은 모델을 명시하지 않아도 된다.
-> 속도 우선 작업은 haiku, 비용이 민감한 자동화 파이프라인도 haiku가 유리하다.
+The override applies for the duration of the current turn only. The session model resumes on your next prompt.
+
+> For most tasks, omit the model field and use the session default.
 
 ---
 
-## 대화 관리
+## Anti-patterns
 
-- 무관한 작업 전환 시: `/clear`
-- 핵심 보존: `/compact [지침]`
-- 잘못된 방향 수정: Esc 중단 -> `/rewind`로 체크포인트 복원
-  - 복원 옵션: 대화만 / 코드만 / 둘 다 / 선택 메시지부터 요약
-  - 체크포인트는 세션 종료 후에도 유지됨
-- 긴 조사: 서브에이전트 위임 ([subagents.md](subagents.md) 참고)
-- 컨텍스트 영향 없는 빠른 질문: `/btw`
+| Anti-pattern | Problem | Fix |
+|---|---|---|
+| "Do your best" | No success criteria | Provide specific criteria + verification conditions |
+| Vague terms ("good", "clean") | Interpreted differently | Use measurable standards |
+| Request result without verification | Plausible-but-wrong outputs slip through | Provide tests / screenshots / scripts to verify |
+| "Investigate" without scope | Reads hundreds of files, consuming context | Narrow the scope or delegate to a subagent |
+| Correcting the same error twice | Context polluted with failed attempts | After two failed corrections, run `/clear` then restart with a more specific prompt |
+
+---
+
+## Conversation Management
+
+- Switch to unrelated task: `/clear`
+- Preserve key context: `/compact [hint]`
+- Undo a wrong direction: `Esc` to stop → `/rewind` to restore checkpoint
+  - Restore options: conversation only / files only / both / summarize from checkpoint
+  - Checkpoints persist after the session ends
+- Long investigations: delegate to a subagent ([subagents.md](subagents.md))
+- Quick question without context impact: `/btw`

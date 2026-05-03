@@ -1,64 +1,65 @@
-<!-- last-reviewed: 2026-04-05 -->
-# 새 프로젝트에 Claude 세팅하는 절차
+<!-- last-reviewed: 2026-05-03 -->
+# Setting Up Claude Code for a New Project
 
-> 참고: 공식 문서 → https://code.claude.com/docs/en/best-practices#configure-your-environment
+> Reference: https://code.claude.com/docs/en/best-practices#configure-your-environment
 
 ---
 
-## 빠른 세팅
+## Quick Setup
 
 ```bash
 cd your-project
 claude
-/init   # 코드베이스 분석 후 CLAUDE.md 자동 생성
+/init   # Analyzes codebase and generates CLAUDE.md
 ```
 
 ---
 
-## 단계별 상세 설명
+## Step-by-step
 
-### Step 1: `/init`으로 자동 생성 (권장)
+### Step 1: Generate with `/init` (Recommended)
 
 ```
-claude      # Claude Code 실행
-/init       # CLAUDE.md 자동 생성
+claude
+/init
 ```
 
-Claude가 빌드 시스템, 테스트 프레임워크, 코드 패턴을 분석하여 초안을 만든다.
-이미 CLAUDE.md가 있다면 개선안을 제안한다.
+Claude analyzes the build system, test framework, and code patterns to generate a draft.
+If CLAUDE.md already exists, `/init` proposes improvements instead.
 
-> 팁: `CLAUDE_CODE_NEW_INIT=1` 환경 변수를 설정하면 `/init`이 CLAUDE.md + skills + hooks를 한 번에 설정하는 인터랙티브 멀티 페이즈 플로우로 실행된다.
+> Tip: Set `CLAUDE_CODE_NEW_INIT=1` to activate an interactive multi-phase flow that sets up CLAUDE.md + skills + hooks in one go:
 >
 > ```bash
 > CLAUDE_CODE_NEW_INIT=1 claude
 > /init
 > ```
 
-### Step 2: CLAUDE.md 수정
+### Step 2: Edit CLAUDE.md
 
-- [ ] 프로젝트 이름, 개요 (한 두 문장)
-- [ ] 실제 빌드/실행/테스트/린트 명령어
-- [ ] 프로젝트 특화 규칙
-- [ ] 핵심 디렉터리/파일 구조
+- [ ] Project name and overview (one or two sentences)
+- [ ] Actual build / run / test / lint commands
+- [ ] Project-specific coding rules
+- [ ] Key directory and file structure
 
-CLAUDE.md 작성 요령 → [claude-md-authoring.md](claude-md-authoring.md)
+Authoring tips → [claude-md-authoring.md](claude-md-authoring.md)
 
-### Step 3: `.claude/skills/` 설정 (선택)
+### Step 3: Configure `.claude/skills/` (Optional)
 
 ```
 .claude/
 ├── skills/
 │   ├── review/SKILL.md
-│   ├── summarize/SKILL.md
-│   └── explain/SKILL.md
+│   └── summarize/SKILL.md
 └── settings.json
 ```
 
-자세히: [skills-and-commands.md](skills-and-commands.md)
+Details → [skills-and-commands.md](skills-and-commands.md)
 
-### Step 4: 권한 설정 (선택)
+### Step 4: Set Permissions (Optional)
 
-`/permissions` 명령으로 allowlist를 관리하거나, 직접 settings.json에 작성한다:
+Three approaches — choose based on your trust level:
+
+**Allowlist (Recommended)**: explicitly allow specific commands.
 
 ```json
 {
@@ -70,28 +71,56 @@ CLAUDE.md 작성 요령 → [claude-md-authoring.md](claude-md-authoring.md)
 }
 ```
 
-유용한 권한 관련 명령:
-- `/permissions` — allowlist 대화형 관리
-- `/sandbox` — OS 레벨 격리 (sandbox 모드 활성화)
-- auto mode — 권한 요청 자동 승인 (신뢰할 수 있는 환경에서만 사용)
+**Sandbox mode**: OS-level isolation.
 
-### Step 5: 검증
+```
+/sandbox    # Enable sandbox mode
+```
 
-- [ ] "이 프로젝트가 뭐야?" → CLAUDE.md 내용을 바르게 인식하는가?
-- [ ] 빌드/테스트 명령어를 올바르게 실행하는가?
-- [ ] `/memory`로 로드된 파일 목록 확인
+**Auto mode**: approve all permission requests automatically (trusted environments only).
+
+Useful permission commands:
+- `/permissions` — manage allowlist interactively
+- `/sandbox` — toggle sandbox mode
+
+### Step 5: Install Plugins (Optional)
+
+Browse and install plugins from the marketplace:
+
+```
+/plugin     # Browse marketplace
+```
+
+Plugins extend Claude Code with additional skills and integrations (e.g., Codex, security scanners).
+
+### Step 6: Connect MCP Servers (Optional)
+
+Add external tools (databases, APIs, services) via MCP:
+
+```bash
+claude mcp add <server-name> <command>
+```
+
+MCP servers appear as additional tools Claude can call during your session.
+
+### Step 7: Verify
+
+- [ ] Ask "What is this project?" → Does Claude correctly describe the project from CLAUDE.md?
+- [ ] Run build/test commands — does Claude execute them correctly?
+- [ ] Run `/memory` to confirm which instruction files are loaded
 
 ---
 
-## CLAUDE.local.md 개인 설정 (비공개)
+## CLAUDE.local.md — Private Personal Config
 
 ```markdown
-# CLAUDE.local.md (git 제외됨)
-- 내 로컬 개발 서버: http://localhost:3001
+# CLAUDE.local.md (excluded from git)
+- My local dev server: http://localhost:3001
 ```
 
 ---
 
-## 참고
+## References
 
-- [Skills 가이드](skills-and-commands.md)
+- [Skills guide](skills-and-commands.md)
+- [CLAUDE.md authoring](claude-md-authoring.md)
