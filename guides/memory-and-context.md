@@ -127,7 +127,17 @@ When to use:
 /compact focus on API changes     # Compress with a hint
 ```
 
-Auto-compaction triggers when context reaches 95% capacity.
+Auto-compaction triggers when context reaches 95% capacity (default). Override the threshold with the `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` environment variable (e.g., `50` = 50%).
+
+Enable or disable auto-compaction in settings:
+
+```json
+{
+  "autoCompactEnabled": true
+}
+```
+
+> Note: Compaction uses the session's active model and `effortLevel`. There is no separate setting to override the model or effort level specifically for compaction.
 
 After `/compact`, Claude re-reads root CLAUDE.md from disk and re-injects it into the session. Nested subdirectory CLAUDE.md files are **not** re-injected automatically — they reload the next time Claude reads a file in that subdirectory. If an instruction disappeared after compaction, it was either given only in conversation or lives in a nested CLAUDE.md that hasn't reloaded yet. If subdirectory rules must survive compaction, include the key content in root CLAUDE.md.
 

@@ -62,7 +62,7 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "autoMemoryEnabled": true,
   "autoCompactEnabled": false,
   "agentPushNotifEnabled": true
