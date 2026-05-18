@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-03 -->
+<!-- last-reviewed: 2026-05-12 -->
 # Skills and Commands
 
 Reusable `/slash` workflows for Claude Code.
@@ -101,8 +101,8 @@ Access by index with `$ARGUMENTS[N]` or the shorthand `$N`:
 
 ```
 /deploy main production
-→ $ARGUMENTS[0] = "main"       ($1 shorthand)
-→ $ARGUMENTS[1] = "production" ($2 shorthand)
+→ $ARGUMENTS[0] = "main"       ($0 shorthand)
+→ $ARGUMENTS[1] = "production" ($1 shorthand)
 ```
 
 ### Named Arguments
@@ -179,6 +179,31 @@ Skill(deploy *)     # deny all skills with names starting with "deploy"
 ```
 
 These rules can be set in `.claude/settings.json` or `~/.claude/settings.json`.
+
+### `skillOverrides` — Visibility Control
+
+Override skill visibility without modifying SKILL.md:
+
+```json
+{
+  "skillOverrides": {
+    "my-skill": "on",               // fully visible (default)
+    "internal-helper": "name-only", // listed by name but description hidden
+    "draft-skill": "user-invocable-only", // shown only when user explicitly invokes
+    "deprecated-skill": "off"       // hidden from all listings
+  }
+}
+```
+
+Four visibility levels:
+| Level | Description |
+|---|---|
+| `on` | Fully visible — name and description shown |
+| `name-only` | Listed by name; description hidden from Claude |
+| `user-invocable-only` | Visible only when user explicitly invokes `/skill-name` |
+| `off` | Hidden from all skill listings |
+
+Toggle visibility interactively via `/skills` menu (press Space).
 
 ---
 
@@ -258,6 +283,33 @@ Before deploying, verify:
 
 Then run: npm run deploy
 ```
+
+---
+
+## Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Skill descriptions are cut short | Too many skills exceed the context budget | Reduce `description` length or set `skillListingBudgetFraction` / `maxSkillDescriptionChars` in settings. Run `/doctor` to check overflow. |
+| Skill not auto-invoked | `description` missing or too vague | Add a clear `description` and `when_to_use` field |
+| Skill runs when it shouldn't | `disable-model-invocation: false` on a side-effect skill | Set `disable-model-invocation: true` |
+
+### Skill Description Budget
+
+When many skills are loaded, descriptions may be truncated to fit the context window.
+
+```json
+{
+  "skillListingBudgetFraction": 0.02,  // % of context window for skill listings (default: 0.01)
+  "maxSkillDescriptionChars": 2048     // per-skill description cap (default: 1536)
+}
+```
+
+Run `/doctor` to see if skill descriptions are being cut.
+
+### `disable-model-invocation` and Subagent Preload
+
+When `disable-model-invocation: true` is set, the skill is also excluded from subagent preload. It will not be injected at startup even if listed in a subagent's `skills` frontmatter.
 
 ---
 

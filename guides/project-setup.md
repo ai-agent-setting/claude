@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-03 -->
+<!-- last-reviewed: 2026-05-12 -->
 # Setting Up Claude Code for a New Project
 
 > Reference: https://code.claude.com/docs/en/best-practices#configure-your-environment
@@ -66,10 +66,16 @@ Three approaches — choose based on your trust level:
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": ["Bash(npm run lint)", "Bash(npm test *)"],
+    "ask": ["Bash(git push *)", "Bash(npm publish *)"],
     "deny": ["Read(./.env)", "Bash(curl *)"]
   }
 }
 ```
+
+Three rule types:
+- `allow` — auto-approve without prompting
+- `ask` — always prompt even in auto-permission mode
+- `deny` — block outright
 
 **Sandbox mode**: OS-level isolation.
 

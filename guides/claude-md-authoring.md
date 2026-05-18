@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-03 -->
+<!-- last-reviewed: 2026-05-12 -->
 # Writing Effective CLAUDE.md Files
 
 CLAUDE.md is the instruction file Claude Code reads automatically when opening a project.
@@ -16,7 +16,7 @@ A well-written CLAUDE.md eliminates the need to repeat the same context in every
 4. **Use imperative form**: "Do X" is clearer than "Please do X."
 5. **Commit it**: The whole team benefits.
 
-> Tip: Run `/init` to auto-generate a CLAUDE.md draft from the codebase.
+> Tip: Run `/init` to auto-generate a CLAUDE.md draft from the codebase. `/init` also reads `AGENTS.md`, `.cursorrules`, and `.windsurfrules` if present, and incorporates them into the generated CLAUDE.md.
 > Set `CLAUDE_CODE_NEW_INIT=1` to activate an interactive multi-phase flow that sets up CLAUDE.md + skills + hooks in one go.
 
 ---
@@ -163,7 +163,7 @@ Rules without `paths` are always loaded at session start.
 
 ## Large Monorepo Configuration
 
-Exclude irrelevant team CLAUDE.md files with `claudeMdExcludes` in `.claude/settings.local.json`:
+Exclude irrelevant team CLAUDE.md files with `claudeMdExcludes`. This setting is available in all config layers (user, project, local, managed policy) and arrays merge across layers:
 
 ```json
 {
@@ -174,7 +174,19 @@ Exclude irrelevant team CLAUDE.md files with `claudeMdExcludes` in `.claude/sett
 }
 ```
 
-Patterns are matched against **absolute file paths** using glob syntax. Arrays merge across config layers. Managed policy CLAUDE.md files cannot be excluded.
+Patterns are matched against **absolute file paths** using glob syntax. Managed policy CLAUDE.md files cannot be excluded.
+
+### Injecting CLAUDE.md via `managed-settings.json`
+
+In enterprise environments, CLAUDE.md content can be directly embedded in `managed-settings.json` using the `claudeMd` key, without requiring a separate file on disk:
+
+```json
+{
+  "claudeMd": "# Org Standards\n\nAll code must pass security review before merge."
+}
+```
+
+This is equivalent to placing a CLAUDE.md at the managed policy layer.
 
 ---
 

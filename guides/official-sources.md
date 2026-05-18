@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-03 -->
+<!-- last-reviewed: 2026-05-12 -->
 # Official Sources and Update References
 
 Official documentation URLs and how to keep guides current.
@@ -33,6 +33,15 @@ Official documentation URLs and how to keep guides current.
 | Checkpointing | https://code.claude.com/docs/en/checkpointing | Checkpoint and rewind details |
 | Costs | https://code.claude.com/docs/en/costs | Token costs and reduction strategies |
 | Status Line | https://code.claude.com/docs/en/statusline | Custom status line configuration |
+| Hooks Guide | https://code.claude.com/docs/en/hooks-guide | Practical hooks usage guide |
+| Background Agents View | https://code.claude.com/docs/en/agent-view | Background agents monitoring UI |
+| Desktop Scheduled Tasks | https://code.claude.com/docs/en/desktop-scheduled-tasks | Scheduled recurring tasks (desktop app) |
+| Remote Control | https://code.claude.com/docs/en/remote-control | Control Claude Code remotely |
+| Channels | https://code.claude.com/docs/en/channels | Telegram, Discord, and other channel integrations |
+| Agent SDK | https://code.claude.com/docs/en/agent-sdk/overview | Building custom agents with the Agent SDK |
+| Git Worktrees | https://code.claude.com/docs/en/worktrees | Isolated worktree execution for subagents |
+| GitHub Actions | https://code.claude.com/docs/en/github-actions | Running Claude Code in GitHub Actions CI |
+| GitHub Code Review | https://code.claude.com/docs/en/code-review | Automated GitHub PR code review |
 
 > Deprecated URL pattern: `https://docs.anthropic.com/.../claude-code/...` — no longer used.
 

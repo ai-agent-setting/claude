@@ -51,7 +51,8 @@
     ]
   },
   "enabledPlugins": {
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "vercel@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -63,5 +64,6 @@
   },
   "effortLevel": "high",
   "autoMemoryEnabled": true,
+  "autoCompactEnabled": false,
   "agentPushNotifEnabled": true
 }

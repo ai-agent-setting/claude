@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-03 -->
+<!-- last-reviewed: 2026-05-12 -->
 # Subagents
 
 A subagent is a separate Claude instance running in its own context window.
@@ -36,6 +36,22 @@ agent: Explore   # optional: specify a built-in agent type
 ---
 ```
 
+### CLI `--agents` Flag
+
+Define session-scoped subagents via the CLI without creating files:
+
+```bash
+claude --agents '{"name": "reviewer", "description": "Code reviewer", "tools": ["Read", "Bash"]}'
+```
+
+### `/agents` GUI Command
+
+The `/agents` slash command opens a GUI with:
+- **Running** tab: currently active subagents
+- **Library** tab: saved custom subagents
+- **Generate with Claude**: auto-generate a subagent definition from a description
+- Model, tool, and memory configuration per agent
+
 ### Built-in Agent Types
 
 | Type | Description |
@@ -68,10 +84,30 @@ description: Performs an independent code review from a fresh perspective
 tools:
   - Read
   - Bash
-model: sonnet              # Short form: opus / sonnet / haiku
-skills:                    # Skills to preload at startup
+disallowedTools:             # denylist — applied before tools allowlist
+  - Write
+model: sonnet                # Short form: opus / sonnet / haiku
+skills:                      # Skills to preload at startup
   - review
   - summarize
+permissionMode: auto         # auto / plan / acceptEdits
+maxTurns: 20                 # Maximum number of turns before stopping
+mcpServers:                  # MCP servers to connect
+  - name: github
+    command: npx mcp-github
+hooks:                       # Hooks scoped to this subagent
+  PostToolUse:
+    - matcher: "Edit"
+      hooks:
+        - type: command
+          command: "npx prettier --write $CLAUDE_FILE_PATH"
+memory: true                 # Enable auto memory for this subagent
+background: false            # Run as background agent
+effort: medium               # low / medium / high / xhigh / max
+isolation: worktree          # Run in isolated git worktree
+color: blue                  # Display color in the UI
+initialPrompt: |             # Injected at the start of the session
+  You are a strict code reviewer. Focus on correctness first.
 ---
 
 Independently review $ARGUMENTS.
@@ -86,6 +122,35 @@ Return a structured report.
 ```
 
 > Note: `.claude/agents/<name>/SKILL.md` format is backward-compatible but the single-file format (`.claude/agents/<name>.md`) is recommended.
+
+### Frontmatter Fields Reference
+
+| Field | Description |
+|---|---|
+| `name` | Agent identifier (lowercase, hyphens) |
+| `description` | Used by Claude to decide when to invoke the agent |
+| `tools` | Allowlist of tools the agent can use |
+| `disallowedTools` | Denylist — applied before `tools` allowlist |
+| `model` | Model to use: `opus` / `sonnet` / `haiku` or full model ID |
+| `skills` | Skills preloaded at startup (full content injected, not just description) |
+| `permissionMode` | `auto` / `plan` / `acceptEdits` |
+| `maxTurns` | Maximum turns before the agent stops |
+| `mcpServers` | MCP servers available to this agent |
+| `hooks` | Hooks scoped only to this agent's session |
+| `memory` | Enable auto memory |
+| `background` | Run as background agent |
+| `effort` | Effort level: `low` / `medium` / `high` / `xhigh` / `max` |
+| `isolation` | `worktree` = run in isolated git worktree; cleaned up if no changes |
+| `color` | Display color in the UI |
+| `initialPrompt` | Text injected at the start of the agent session |
+
+### `isolation: worktree`
+
+When set to `worktree`, the subagent runs in a temporary git worktree isolated from the main working tree. If the agent makes no changes, the worktree is automatically cleaned up. The worktree path and branch name are returned in the result if changes were made.
+
+### `disallowedTools` vs `tools`
+
+Both can be specified simultaneously. Resolution order: `disallowedTools` is checked first, then `tools` allowlist.
 
 ### Preloaded Skills Behavior
 
