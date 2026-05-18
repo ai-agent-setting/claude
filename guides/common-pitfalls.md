@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-03 -->
+<!-- last-reviewed: 2026-05-19 -->
 # Common Mistakes and Anti-patterns
 
 > Reference: https://code.claude.com/docs/en/best-practices#avoid-common-failure-patterns
@@ -20,10 +20,10 @@ Fix: Trim ruthlessly. Split into `.claude/rules/` or use `@import` for detail. U
 
 If Claude already follows a rule correctly without an explicit instruction — delete the instruction, or convert it to a hook that enforces the behavior automatically.
 
-### Using `@import` to Reduce Context
+### Using `@path` to Reduce Context
 
-Misconception: Splitting files with `@import` reduces context size.
-Reality: `@import` is a structural tool only — the full imported file is loaded regardless.
+Misconception: Splitting files with `@path/to/file` imports reduces context size.
+Reality: `@path` is a structural tool only — the full imported file is loaded regardless.
 Fix: Use path-scoped rules to reduce context. Rules with a `paths` field load only when Claude edits a matching file.
 
 ### Instructions Disappear After `/compact`

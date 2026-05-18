@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-12 -->
+<!-- last-reviewed: 2026-05-19 -->
 # Subagents
 
 A subagent is a separate Claude instance running in its own context window.
@@ -59,6 +59,8 @@ The `/agents` slash command opens a GUI with:
 | `general-purpose` | General agent. Default. |
 | `Explore` | Optimized for fast file and pattern search in a codebase |
 | `Plan` | Specialized for software architecture and implementation planning |
+| `statusline-setup` | Configures the status line (auto-invoked via `/statusline`) |
+| `claude-code-guide` | Answers Claude Code feature questions (auto-invoked on related queries) |
 
 ---
 
@@ -90,7 +92,7 @@ model: sonnet                # Short form: opus / sonnet / haiku
 skills:                      # Skills to preload at startup
   - review
   - summarize
-permissionMode: auto         # auto / plan / acceptEdits
+permissionMode: auto         # default / acceptEdits / auto / dontAsk / bypassPermissions / plan
 maxTurns: 20                 # Maximum number of turns before stopping
 mcpServers:                  # MCP servers to connect
   - name: github
@@ -101,7 +103,7 @@ hooks:                       # Hooks scoped to this subagent
       hooks:
         - type: command
           command: "npx prettier --write $CLAUDE_FILE_PATH"
-memory: true                 # Enable auto memory for this subagent
+memory: user                 # Auto memory scope: user / project / local
 background: false            # Run as background agent
 effort: medium               # low / medium / high / xhigh / max
 isolation: worktree          # Run in isolated git worktree
@@ -125,28 +127,30 @@ Return a structured report.
 
 ### Frontmatter Fields Reference
 
-| Field | Description |
-|---|---|
-| `name` | Agent identifier (lowercase, hyphens) |
-| `description` | Used by Claude to decide when to invoke the agent |
-| `tools` | Allowlist of tools the agent can use |
-| `disallowedTools` | Denylist — applied before `tools` allowlist |
-| `model` | Model to use: `opus` / `sonnet` / `haiku` or full model ID |
-| `skills` | Skills preloaded at startup (full content injected, not just description) |
-| `permissionMode` | `auto` / `plan` / `acceptEdits` |
-| `maxTurns` | Maximum turns before the agent stops |
-| `mcpServers` | MCP servers available to this agent |
-| `hooks` | Hooks scoped only to this agent's session |
-| `memory` | Enable auto memory |
-| `background` | Run as background agent |
-| `effort` | Effort level: `low` / `medium` / `high` / `xhigh` / `max` |
-| `isolation` | `worktree` = run in isolated git worktree; cleaned up if no changes |
-| `color` | Display color in the UI |
-| `initialPrompt` | Text injected at the start of the agent session |
+| Field | Required | Description |
+|---|---|---|
+| `name` | Yes | Agent identifier (lowercase, hyphens) |
+| `description` | Yes | Used by Claude to decide when to invoke the agent |
+| `tools` | | Allowlist of tools the agent can use |
+| `disallowedTools` | | Denylist — applied before `tools` allowlist |
+| `model` | | Model to use: `opus` / `sonnet` / `haiku` or full model ID |
+| `skills` | | Skills preloaded at startup (full content injected, not just description) |
+| `permissionMode` | | `default` / `acceptEdits` / `auto` / `dontAsk` / `bypassPermissions` / `plan` |
+| `maxTurns` | | Maximum turns before the agent stops |
+| `mcpServers` | | MCP servers available to this agent (not supported in plugin subagents) |
+| `hooks` | | Hooks scoped only to this agent's session (not supported in plugin subagents) |
+| `memory` | | Auto memory scope: `user` / `project` / `local` |
+| `background` | | Run as background agent |
+| `effort` | | Effort level: `low` / `medium` / `high` / `xhigh` / `max` |
+| `isolation` | | `worktree` = run in isolated git worktree; cleaned up if no changes |
+| `color` | | Display color in the UI |
+| `initialPrompt` | | Text injected at the start of the agent session |
 
 ### `isolation: worktree`
 
 When set to `worktree`, the subagent runs in a temporary git worktree isolated from the main working tree. If the agent makes no changes, the worktree is automatically cleaned up. The worktree path and branch name are returned in the result if changes were made.
+
+> Note: A subagent starts in the main conversation's current working directory. `cd` commands do not persist between Bash calls within a subagent.
 
 ### `disallowedTools` vs `tools`
 

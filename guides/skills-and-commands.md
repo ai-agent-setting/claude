@@ -1,9 +1,11 @@
-<!-- last-reviewed: 2026-05-12 -->
+<!-- last-reviewed: 2026-05-19 -->
 # Skills and Commands
 
 Reusable `/slash` workflows for Claude Code.
 
 > Reference: https://code.claude.com/docs/en/skills
+>
+> Claude Code skills follow the [Agent Skills (agentskills.io)](https://agentskills.io) open standard, which works across multiple AI tools.
 
 ---
 
@@ -68,6 +70,10 @@ $ARGUMENTS is replaced with text the user typed after /skill-name.
 ```
 
 Only `description` is required for auto-invocation. `name` defaults to the directory name if omitted.
+
+> Note: `paths` limits when the skill is **auto-activated** by Claude. Manually calling `/skill-name` always works regardless of the `paths` setting.
+
+> Note: `allowed-tools` accepts either a YAML list or a space-separated string (e.g., `allowed-tools: Read Grep`).
 
 ---
 
@@ -156,6 +162,15 @@ Recent commits: !`git log --oneline -5`
 Review $ARGUMENTS based on the above context.
 ```
 
+For multi-line commands, use a fenced code block with `!`:
+
+````markdown
+```!
+git log --oneline -10
+git status --short
+```
+````
+
 ### Disabling Shell Injection
 
 ```json
@@ -223,7 +238,9 @@ Plugin skills use the `plugin-name:skill-name` namespace.
 2. `~/.claude/skills/` — personal global
 3. Plugin skills — `plugin-name:skill-name` format
 
-**Monorepo auto-discovery**: When editing files in a subdirectory, Claude also discovers skills in that subdirectory's `.claude/skills/`.
+**Monorepo auto-discovery**: Project skills load from `.claude/skills/` in your starting directory and in every parent directory up to the repository root. When editing files in a subdirectory, Claude also discovers skills in that subdirectory's `.claude/skills/`.
+
+> Skill files are watched for changes. Adding, editing, or removing a skill takes effect within the current session without restarting. (Exception: creating a brand-new top-level skill directory requires a restart.)
 
 ---
 

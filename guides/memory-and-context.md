@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-03 -->
+<!-- last-reviewed: 2026-05-19 -->
 # Context Window and Memory Management
 
 Claude Code has two memory systems:
@@ -15,7 +15,7 @@ Claude Code has two memory systems:
 |---|---|---|
 | Author | Human | Claude |
 | Content | Rules and instructions | Learned patterns and preferences |
-| Load method | Root CLAUDE.md: fully loaded every session. Subdirectory CLAUDE.md: loaded on demand | Top 200 lines or 25 KB (whichever comes first) loaded per session |
+| Load method | Root CLAUDE.md: fully loaded every session (no size limit). Subdirectory CLAUDE.md: loaded on demand | MEMORY.md index: top 200 lines or 25 KB per session. CLAUDE.md loads in full regardless of length. |
 | Delivery | As a user message after the system prompt (not part of the system prompt itself) | — |
 | Use cases | Coding standards, workflows, architecture | Build commands, debugging insights |
 
@@ -40,7 +40,8 @@ Claude automatically stores corrections, preferences, build commands, and debugg
 
 `<project>` is derived from the git repo root.
 - Outside a git repo, the project root path is used.
-- Git worktrees and subdirectories share the same auto memory directory.
+- All worktrees and subdirectories within the same git repository share one auto memory directory.
+- Auto memory is **machine-local** — not shared across cloud environments or other machines.
 
 Only `MEMORY.md` (up to 200 lines or 25 KB) is auto-loaded each session. Other files are read by Claude on demand.
 
@@ -60,11 +61,13 @@ Auto memory files are plain markdown — edit or delete them at any time.
 
 ### Custom Storage Location
 
-Change the storage path with `autoMemoryDirectory`. Accepted in policy, local, and user settings. **Not accepted in project settings** (`.claude/settings.json`) to prevent a shared project from redirecting auto memory writes to sensitive locations.
+Change the storage path with `autoMemoryDirectory`. Accepted from policy settings, user settings, and the `--settings` flag. **Not accepted in project settings** (`.claude/settings.json`) to prevent a shared project from redirecting auto memory writes to sensitive locations.
+
+The value must be an absolute path or start with `~/`.
 
 ```json
 {
-  "autoMemoryDirectory": "/custom/path/to/memory"
+  "autoMemoryDirectory": "~/custom/memory"
 }
 ```
 
@@ -126,7 +129,7 @@ When to use:
 
 Auto-compaction triggers when context reaches 95% capacity.
 
-After `/compact`, the root CLAUDE.md is re-injected automatically. Nested subdirectory CLAUDE.md files are **not** re-injected automatically — they reload the next time Claude reads a file in that subdirectory. If subdirectory rules must survive compaction, include the key content in root CLAUDE.md.
+After `/compact`, Claude re-reads root CLAUDE.md from disk and re-injects it into the session. Nested subdirectory CLAUDE.md files are **not** re-injected automatically — they reload the next time Claude reads a file in that subdirectory. If an instruction disappeared after compaction, it was either given only in conversation or lives in a nested CLAUDE.md that hasn't reloaded yet. If subdirectory rules must survive compaction, include the key content in root CLAUDE.md.
 
 To control what is preserved during compaction, add a compaction directive to CLAUDE.md:
 

@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-03 -->
+<!-- last-reviewed: 2026-05-19 -->
 # Prompt Engineering Best Practices for Claude Code
 
 > Reference: https://code.claude.com/docs/en/best-practices
@@ -77,6 +77,8 @@ When done, write the full spec to SPEC.md.
 
 Explicitly naming `AskUserQuestion` makes Claude collect requirements in a structured way.
 After the spec is complete, implement in a new session (`claude --continue`).
+
+> Tip: Use `/rename` to give the current session a meaningful name before resuming later. Named sessions are easier to find with `claude --resume`.
 
 ### `/btw` — Quick Questions Without Context Impact
 

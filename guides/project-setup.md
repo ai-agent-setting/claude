@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-12 -->
+<!-- last-reviewed: 2026-05-19 -->
 # Setting Up Claude Code for a New Project
 
 > Reference: https://code.claude.com/docs/en/best-practices#configure-your-environment
@@ -97,7 +97,7 @@ Browse and install plugins from the marketplace:
 /plugin     # Browse marketplace
 ```
 
-Plugins extend Claude Code with additional skills and integrations (e.g., Codex, security scanners).
+Plugins extend Claude Code with skills, hooks, subagents, and MCP servers bundled into a single installable unit (e.g., Codex, security scanners).
 
 ### Step 6: Connect MCP Servers (Optional)
 

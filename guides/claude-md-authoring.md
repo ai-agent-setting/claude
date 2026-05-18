@@ -1,4 +1,4 @@
-<!-- last-reviewed: 2026-05-12 -->
+<!-- last-reviewed: 2026-05-19 -->
 # Writing Effective CLAUDE.md Files
 
 CLAUDE.md is the instruction file Claude Code reads automatically when opening a project.
@@ -11,10 +11,11 @@ A well-written CLAUDE.md eliminates the need to repeat the same context in every
 ## Core Principles
 
 1. **Be specific**: "Write good code" is meaningless. "Keep functions under 20 lines" is measurable.
-2. **Stay under 200 lines**: Official recommendation. Compliance drops as length grows. Split into `.claude/rules/` or use `@import` when over the limit.
-3. **Project-specific only**: Exclude anything Claude can infer from reading the code or standard conventions.
+2. **Stay under 200 lines**: Official recommendation. Compliance drops as length grows. Split into `.claude/rules/` or use `@path` imports when over the limit.
+3. **Project-specific only**: Exclude anything Claude can infer from reading the code or standard conventions. For each line, ask: "Would removing this cause Claude to make mistakes?" If not, cut it.
 4. **Use imperative form**: "Do X" is clearer than "Please do X."
 5. **Commit it**: The whole team benefits.
+6. **Review it regularly**: Treat CLAUDE.md like code — review it when things go wrong, prune it regularly, and test changes by observing whether Claude's behavior actually shifts.
 
 > Tip: Run `/init` to auto-generate a CLAUDE.md draft from the codebase. `/init` also reads `AGENTS.md`, `.cursorrules`, and `.windsurfrules` if present, and incorporates them into the generated CLAUDE.md.
 > Set `CLAUDE_CODE_NEW_INIT=1` to activate an interactive multi-phase flow that sets up CLAUDE.md + skills + hooks in one go.
