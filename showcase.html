@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Claude Code 커스터마이징 쇼케이스</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      color: #1a1a1a;
+      background: #fafafa;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container { max-width: 880px; margin: 0 auto; }
+
+    /* Header */
+    header {
+      border-bottom: 2px solid #0b5fff;
+      padding-bottom: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    header h1 { font-size: 1.55rem; font-weight: 700; }
+    header .meta { font-size: 0.85rem; color: #666; margin-top: 0.25rem; }
+
+    /* TOC */
+    nav#toc {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    nav#toc h2 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #999;
+      margin-bottom: 0.6rem;
+    }
+    nav#toc ol {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+    }
+    nav#toc li { counter-increment: toc; }
+    nav#toc li::before {
+      content: counter(toc) ". ";
+      color: #aaa;
+      font-size: 0.8rem;
+    }
+    nav#toc ol { counter-reset: toc; }
+    nav#toc a { color: #0b5fff; text-decoration: none; font-size: 0.88rem; }
+    nav#toc a:hover { text-decoration: underline; }
+
+    /* Section */
+    section { margin-bottom: 3.5rem; }
+    h2.section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e5e5e5;
+      margin-bottom: 1.5rem;
+    }
+    h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.6rem; }
+
+    /* Overview stat cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.875rem;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .stat-card .num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0b5fff;
+      line-height: 1;
+    }
+    .stat-card .label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #555;
+      margin-top: 0.3rem;
+    }
+    .stat-card .desc {
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 0.35rem;
+      line-height: 1.5;
+    }
+
+    /* Principle box */
+    .principle-box {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.875rem;
+      color: #444;
+      margin-bottom: 1.25rem;
+    }
+    .principle-box strong { color: #92400e; }
+
+    /* Hook cards */
+    .hook-grid { display: grid; gap: 1rem; }
+    .hook-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    .hook-badge {
+      display: inline-block;
+      background: #0b5fff;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.18rem 0.45rem;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      margin-bottom: 0.5rem;
+    }
+    .hook-card .hook-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .hook-card p {
+      font-size: 0.875rem;
+      color: #444;
+      margin-bottom: 0.75rem;
+    }
+    .hook-matcher {
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 0.6rem;
+    }
+    .hook-matcher code {
+      background: #f4f4f6;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    /* Chain pattern */
+    .chain-box {
+      background: #f0f4ff;
+      border: 1px solid #b8ccff;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .chain-box h3 { color: #1740a8; margin-bottom: 0.75rem; }
+    .chain-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .chain-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .chain-arrow { color: #0b5fff; flex-shrink: 0; padding-top: 0.1rem; }
+    .chain-desc { color: #333; }
+    .chain-note {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 0.875rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #b8ccff;
+    }
+
+    /* Rules */
+    .rule-block {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .rule-block h3 { margin-bottom: 0.5rem; }
+    .rule-block p { font-size: 0.875rem; color: #444; }
+    .rule-block ul {
+      padding-left: 1.1rem;
+      font-size: 0.875rem;
+      color: #444;
+      margin-top: 0.5rem;
+    }
+    .rule-block li { margin-bottom: 0.25rem; }
+
+    .sub-heading {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; margin-top: 0.5rem; page-break-inside: avoid; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    th {
+      background: #0b5fff;
+      color: #fff;
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    td { padding: 0.4rem 0.75rem; border-bottom: 1px solid #eee; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #f9f9fb; }
+    .tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    .s1 { background: #fee2e2; color: #991b1b; }
+    .s2 { background: #fef3c7; color: #92400e; }
+
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .recipe-cell {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+    }
+    .recipe-cell .before { color: #dc2626; text-decoration: line-through; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; }
+    .recipe-cell .after { color: #16a34a; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; margin-top: 0.2rem; }
+
+    /* Worklog */
+    .wl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .wl-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .wl-filename {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.8rem;
+      color: #0b5fff;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .wl-trigger { font-size: 0.82rem; color: #555; }
+
+    /* Skills */
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+      gap: 1rem;
+    }
+    .skill-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .skill-cmd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      background: #f4f4f6;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      display: inline-block;
+      color: #1a1a1a;
+    }
+    .skill-ctx {
+      font-size: 0.7rem;
+      color: #888;
+      margin-left: 0.4rem;
+    }
+    .skill-desc {
+      font-size: 0.83rem;
+      color: #444;
+      margin-top: 0.5rem;
+      line-height: 1.55;
+    }
+
+    /* Plugins */
+    .plugin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .plugin-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    .plugin-id {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .plugin-ver {
+      font-size: 0.75rem;
+      color: #888;
+      margin-left: 0.4rem;
+    }
+    .plugin-desc {
+      font-size: 0.85rem;
+      color: #444;
+      margin-top: 0.6rem;
+      line-height: 1.55;
+    }
+
+    /* Guides cycle */
+    .cycle-wrap {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin: 1.25rem 0;
+    }
+    .cycle-step {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-size: 0.83rem;
+      text-align: center;
+      min-width: 145px;
+    }
+    .cycle-step .step-num {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #0b5fff;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.1rem;
+    }
+    .cycle-arrow-sep {
+      color: #0b5fff;
+      font-size: 1rem;
+      padding: 0 0.1rem;
+    }
+
+    details { margin-top: 1.25rem; }
+    details summary {
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #0b5fff;
+      user-select: none;
+    }
+    details summary:hover { text-decoration: underline; }
+    details .guide-list {
+      margin-top: 0.75rem;
+      padding-left: 1.2rem;
+      font-size: 0.83rem;
+      color: #444;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.25rem;
+    }
+    details .guide-list li { list-style-type: disc; margin-bottom: 0.2rem; }
+
+    /* Prism override */
+    code[class*="language-"],
+    pre[class*="language-"] {
+      background: #f4f4f6 !important;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+      font-size: 0.79rem !important;
+      border-radius: 6px;
+      color: #24292e !important;
+      text-shadow: none !important;
+    }
+    pre[class*="language-"] {
+      padding: 0.85rem 1rem !important;
+      overflow-x: auto;
+      margin: 0;
+    }
+    .token.keyword { color: #d73a49 !important; }
+    .token.string { color: #032f62 !important; }
+    .token.comment { color: #6a737d !important; }
+    .token.function { color: #6f42c1 !important; }
+
+    /* Inline code not in pre */
+    :not(pre) > code {
+      background: #f4f4f6;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.85em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #d63384;
+    }
+
+    /* Print */
+    @media print {
+      body { background: #fff; font-size: 13px; }
+      .hook-card, .stat-card, .wl-card, .skill-card, .plugin-card, .rule-block {
+        page-break-inside: avoid;
+        border: 1px solid #ccc !important;
+      }
+      .table-wrap, table { page-break-inside: avoid; }
+      a { color: #1a1a1a !important; text-decoration: none; }
+      nav#toc { page-break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Claude Code 커스터마이징 쇼케이스</h1>
+    <p class="meta">~/.claude/ 전역 설정 &nbsp;·&nbsp; 마지막 갱신: 2026-05-19</p>
+  </header>
+
+  <nav id="toc">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#overview">한눈에 보기</a></li>
+      <li><a href="#hooks">훅 &amp; 알림</a></li>
+      <li><a href="#rules">응답 규칙 &amp; 한국어 글쓰기</a></li>
+      <li><a href="#worklog">자동 작업 로그</a></li>
+      <li><a href="#skills">커스텀 스킬</a></li>
+      <li><a href="#plugins">플러그인</a></li>
+      <li><a href="#guides">가이드 최신화</a></li>
+    </ol>
+  </nav>
+
+  <!-- ========== OVERVIEW ========== -->
+  <section id="overview">
+    <h2 class="section-title">한눈에 보기</h2>
+    <p style="font-size:0.9rem;color:#555;margin-bottom:1.25rem;">
+      Claude Code를 기본 상태로 쓰면 세 가지 문제가 생긴다. 응답이 완료됐는지 알기 어렵고, 설치 로그에 토큰을 낭비하고, 세션이 끊기면 이전 결정의 맥락을 잃는다. 이 설정들은 그 문제들을 겨냥한다.
+    </p>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="num">4</div>
+        <div class="label">훅</div>
+        <div class="desc">터미널을 주시하지 않아도 응답·대기·컨텍스트 임계를 놓치지 않도록</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">4</div>
+        <div class="label">커스텀 스킬</div>
+        <div class="desc">반복 작업을 명령 하나로, 메인 컨텍스트 소비 없이 처리하기 위해</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">4</div>
+        <div class="label">규칙 파일</div>
+        <div class="desc">AI 냄새 제거, 범위 외 편집 방지, 토큰 낭비 차단을 각각 명시하기 위해</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">10</div>
+        <div class="label">가이드</div>
+        <div class="desc">공식 문서가 바뀌어도 로컬 참조 지식이 따라가도록</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">2</div>
+        <div class="label">플러그인</div>
+        <div class="desc">Claude 단독으로 안 되는 작업을 독립적인 외부 엔진으로 보강하기 위해</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">high</div>
+        <div class="label">effortLevel</div>
+        <div class="desc">계획 단계는 가장 정확하게, 나머지는 빠르게 — 비용과 품질을 동시에 잡기 위해</div>
+      </div>
+    </div>
+
+    <div class="rule-block" style="margin-top:1.25rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div>
+        <h3>opusplan 모드</h3>
+        <p>
+          <code>/plan</code> 진입 시 Opus 4.7로 전환해 설계를 깊이 검토하고, 실행 단계는 Sonnet으로 처리한다.
+          계획 품질을 높이되 전체 비용은 낮추는 전략이다.
+          <code>effortLevel: high</code>는 구현·검증에 충분한 리소스를 투입하도록 한다.
+        </p>
+      </div>
+      <div>
+        <h3>에이전트 참조 문서 영문 정책</h3>
+        <p>
+          Claude가 컨텍스트에 로드해 읽는 참조 문서(가이드·스킬)는 전부 영문으로 작성한다.
+          동일 내용 기준으로 영문이 한국어보다 토큰 수가 적기 때문이다.
+          한국어 규칙(CLAUDE.md)은 사용자와의 응답 인터페이스에만 적용한다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOOKS ========== -->
+  <section id="hooks">
+    <h2 class="section-title">훅 &amp; 알림</h2>
+
+    <div class="principle-box">
+      <strong>훅 작성 원칙:</strong> 훅은 매 이벤트마다 실행되므로 LLM 호출을 넣으면 토큰 비용이 누적된다.
+      <code>claude</code> CLI, Anthropic API, MCP 도구는 훅 명령 안에 쓰지 않는다.
+      허용 범위는 <code>osascript</code> · <code>jq</code> · <code>curl</code> 같은 순수 셸 작업이다.
+    </div>
+
+    <div class="hook-grid">
+
+      <!-- Stop -->
+      <div class="hook-card">
+        <span class="hook-badge">Stop</span>
+        <div class="hook-title">응답 완료 알림</div>
+        <p>
+          긴 작업을 걸어두면 다른 창에서 다른 일을 한다. 그때 응답이 완료됐는지 확인하려고 터미널로 돌아오는 행동이 반복된다. 알림이 오면 그 왕복이 사라진다.
+        </p>
+        <div class="hook-matcher">matcher: <code>""</code> (모든 세션)</div>
+        <pre><code class="language-bash">osascript -e 'display notification "답변이 완료되었습니다" with title "Claude Code"'</code></pre>
+      </div>
+
+      <!-- Notification -->
+      <div class="hook-card">
+        <span class="hook-badge">Notification</span>
+        <div class="hook-title">입력 / 허가 대기 알림</div>
+        <p>
+          자동화 작업 중 Claude가 권한 프롬프트에서 멈춰 있어도 사용자는 모른다. 알림이 없으면 몇 분씩 멈춰 있는 세션을 뒤늦게 발견하게 된다.
+        </p>
+        <div class="hook-matcher">matcher: <code>""</code></div>
+        <pre><code class="language-bash">osascript -e 'display notification "Claude가 입력 또는 허가를 기다리고 있습니다" with title "Claude Code"'</code></pre>
+      </div>
+
+      <!-- PreCompact -->
+      <div class="hook-card">
+        <span class="hook-badge">PreCompact</span>
+        <div class="hook-title">컨텍스트 70% 도달 알림</div>
+        <p>
+          대화 컨텍스트가 70%에 달하면 알림이 뜬다.
+          그대로 두면 자동 압축이 일어나 세션 흐름이 끊어지므로, <code>/checkpoint</code>로 미리 정리하도록 유도한다.
+        </p>
+        <div class="hook-matcher">matcher: <code>""</code></div>
+        <pre><code class="language-bash">osascript -e 'display notification "컨텍스트 70% 도달 — /checkpoint 실행 권장" with title "Claude Code"'</code></pre>
+      </div>
+
+      <!-- PostToolUse -->
+      <div class="hook-card">
+        <span class="hook-badge">PostToolUse</span>
+        <div class="hook-title">편집 후 센티넬 파일 생성</div>
+        <p>
+          Codex 리뷰 알림을 모든 세션에 보내면 노이즈가 된다. 질문·탐색만 한 세션에는 필요 없다. 실제로 코드를 수정했을 때만 리뷰 알림이 뜨도록 편집 여부를 파일로 기록한다.
+        </p>
+        <div class="hook-matcher">matcher: <code>Edit|Write</code></div>
+        <pre><code class="language-bash">touch /tmp/claude_code_modified</code></pre>
+      </div>
+
+    </div>
+
+    <!-- Chain pattern box -->
+    <div class="chain-box">
+      <h3>PostToolUse → Stop 연쇄 패턴</h3>
+      <div class="chain-flow">
+        <div class="chain-row">
+          <span class="chain-arrow">1.</span>
+          <span class="chain-desc">Edit / Write 실행 시 <code>touch /tmp/claude_code_modified</code></span>
+        </div>
+        <div class="chain-row">
+          <span class="chain-arrow">2.</span>
+          <span class="chain-desc">세션 종료(Stop) 시 센티넬 파일 존재 여부 확인</span>
+        </div>
+        <div class="chain-row">
+          <span class="chain-arrow">3a.</span>
+          <span class="chain-desc">파일 없음 → 응답 완료 알림만 발송 (코드 편집 없는 세션)</span>
+        </div>
+        <div class="chain-row">
+          <span class="chain-arrow">3b.</span>
+          <span class="chain-desc">파일 있음 → 삭제 후 <strong>Codex 리뷰 권장 알림</strong> 추가 발송</span>
+        </div>
+      </div>
+      <pre style="margin-top:0.875rem;"><code class="language-bash">if [ -f /tmp/claude_code_modified ]; then rm /tmp/claude_code_modified &amp;&amp; osascript -e 'display notification "/codex:rescue 로 리뷰를 실행하세요" with title "Codex 리뷰 권장"'; fi</code></pre>
+      <p class="chain-note">
+        알림 피로를 막는 게 핵심이다. 두 훅이 파일 시스템으로 상태를 공유해, 리뷰가 필요한 세션에만 추가 알림이 간다.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== RULES ========== -->
+  <section id="rules">
+    <h2 class="section-title">응답 규칙 &amp; 한국어 글쓰기</h2>
+
+    <p class="sub-heading">응답 규칙</p>
+
+    <div class="rule-block">
+      <h3>선제 질문 기준 (<code>AskUserQuestion</code>)</h3>
+      <p>즉시 행동하는 경우: 요청이 명확하고 범위가 한정되어 있을 때, 이미 충분한 맥락이 대화에 있을 때.</p>
+      <p style="margin-top:0.4rem;">먼저 묻는 경우:</p>
+      <ul>
+        <li>접근법이 둘 이상이고 선택에 따라 결과가 달라질 때</li>
+        <li>범위가 모호할 때 (어떤 파일, 얼마나 깊이 편집할지)</li>
+        <li>되돌리기 어려운 작업일 때</li>
+      </ul>
+    </div>
+
+    <div class="rule-block">
+      <h3>Surgical Changes (코딩 행동 규칙)</h3>
+      <p>범위 밖 코드를 건드리면 의도치 않은 회귀가 생기고 리뷰 부담이 늘어난다. 변경 의도도 추적하기 어려워진다. 그래서 요청 범위 안에 든 줄만 수정한다.</p>
+      <p style="margin-top:0.4rem;">죽은 코드를 발견하면 삭제하지 않고 언급만 한다. 자신의 변경으로 인해 불필요해진 import·변수·함수만 제거한다.</p>
+    </div>
+
+    <div class="rule-block">
+      <h3>명령 출력 절감 (<code>rules/command-output.md</code>)</h3>
+      <p><code>npm install</code> 출력이 수백 줄이면 Claude가 이를 읽는 데 토큰을 낭비하고, 진짜 에러 메시지를 찾기도 어려워진다. 성공·실패 여부만 알면 충분한 경우가 대부분이다.</p>
+      <ul>
+        <li>npm: <code>--silent</code> 또는 <code>--loglevel=error</code></li>
+        <li>yarn: <code>--silent</code> · pnpm: <code>--reporter=silent</code> · pip: <code>-q</code></li>
+        <li>출력이 긴 명령: <code>2&gt;/dev/null</code> 또는 <code>| tail -5</code></li>
+      </ul>
+      <p style="margin-top:0.5rem;">실패 시 에러 출력, 빌드 경고, 테스트 결과는 억제하지 않는다.</p>
+    </div>
+
+    <p class="sub-heading">한국어 글쓰기 규칙</p>
+
+    <p style="font-size:0.875rem;color:#444;margin-bottom:1rem;">
+      "결론적으로", 이모지, "~할 수 있다" 같은 패턴은 LLM 응답임을 즉각 드러내 글의 신뢰도를 낮춘다. 자연스러운 한국어처럼 읽히게 하려면 이 패턴들을 체계적으로 제거해야 한다. 10개 카테고리로 분류해 S1(무조건 제거)과 S2(3회 이상 등장 시 제거)를 구분했다.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>카테고리</th>
+            <th>심각도</th>
+            <th>대표 패턴</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>A. 번역투</td><td><span class="tag s1">S1</span></td><td>~에 대해 / ~를 통해 / ~에 있어서 / 가지고 있다</td></tr>
+          <tr><td>B. 영어 용어 과다</td><td><span class="tag s2">S2</span></td><td>framework를 leverage하여 / 괄호 병기 남발</td></tr>
+          <tr><td>C. 구조적 AI 패턴</td><td><span class="tag s1">S1</span></td><td>첫째·둘째·셋째 전체 지배 / 이모지 남발</td></tr>
+          <tr><td>D. AI 관용구</td><td><span class="tag s1">S1</span> (비재정의)</td><td>결론적으로 / 시사하는 바가 크다 / 혁신적인</td></tr>
+          <tr><td>E. 문장 길이 균일</td><td><span class="tag s2">S2</span></td><td>모든 문장이 같은 길이 / 어미 4~5개 연속 반복</td></tr>
+          <tr><td>F. 과도한 수식</td><td><span class="tag s2">S2</span></td><td>매우 / 정말 / 대단히 / ~적 측면 / ~성 남발</td></tr>
+          <tr><td>G. 과도한 완곡</td><td><span class="tag s2">S2</span></td><td>~할 수 있을 것으로 보인다 (이중 헤징)</td></tr>
+          <tr><td>H. 접속사 남발</td><td><span class="tag s2">S2</span></td><td>또한 / 따라서 / 나아가 / 아울러 문두 반복</td></tr>
+          <tr><td>I. 형식명사 과다</td><td><span class="tag s2">S2</span></td><td>~한 것이다 / ~할 필요가 있다 / ~라는 것이다</td></tr>
+          <tr><td>J. 시각 장식 과다</td><td><span class="tag s2">S2</span></td><td>본문 bold 남발 / 대시(—) 남발</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="sub-heading">치환 예시</p>
+    <div class="recipe-grid">
+      <div class="recipe-cell">
+        <div class="before">X에 대해 논의한다</div>
+        <div class="after">X를 논의한다</div>
+      </div>
+      <div class="recipe-cell">
+        <div class="before">X를 통해 Y한다</div>
+        <div class="after">X로 Y한다 / X해서 Y한다</div>
+      </div>
+      <div class="recipe-cell">
+        <div class="before">경쟁력을 가지고 있다</div>
+        <div class="after">경쟁력이 있다 / 경쟁력이 강하다</div>
+      </div>
+      <div class="recipe-cell">
+        <div class="before">높일 수 있다</div>
+        <div class="after">높인다 (사실) / 높일 여지가 있다 (가능성)</div>
+      </div>
+      <div class="recipe-cell">
+        <div class="before">합의가 이루어졌다</div>
+        <div class="after">합의했다</div>
+      </div>
+      <div class="recipe-cell">
+        <div class="before">~할 필요가 있다</div>
+        <div class="after">~해야 한다</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WORKLOG ========== -->
+  <section id="worklog">
+    <h2 class="section-title">자동 작업 로그</h2>
+    <p style="font-size:0.875rem;color:#444;margin-bottom:1.25rem;">
+      Claude Code는 세션 간 컨텍스트를 공유하지 않는다. 다음 세션에서 "왜 그 결정을 했는가"를 알려면 기록이 남아 있어야 한다. Auto Memory는 상위 레벨 정보만 담으므로, 세부 경위와 트러블슈팅 내역은 로그가 맡는다.
+    </p>
+
+    <div class="wl-grid">
+      <div class="wl-card">
+        <div class="wl-filename">worklog.md</div>
+        <div class="wl-trigger">신규 기능, 구조 변경, 버그 수정 등 의미 있는 완료와 설계 결정을 기록</div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-filename">troubleshooting.md</div>
+        <div class="wl-trigger">에러 증상 · 근본 원인 · 해결책을 세트로 기록</div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-filename">decisions.md</div>
+        <div class="wl-trigger">재사용 빈도가 높은 설계 결정과 그 근거 기록</div>
+      </div>
+    </div>
+
+    <p style="font-size:0.8rem;color:#666;margin-bottom:0.5rem;">형식 — 기존 내용 아래에 추가(append-only):</p>
+    <pre><code class="language-bash">## 2026-05-19 — [한 줄 제목]
+
+[내용]</code></pre>
+  </section>
+
+  <!-- ========== SKILLS ========== -->
+  <section id="skills">
+    <h2 class="section-title">커스텀 스킬</h2>
+    <p style="font-size:0.875rem;color:#444;margin-bottom:1.25rem;">
+      감사·리뷰 작업은 결과만 필요하다. 분석 과정을 메인 대화에 쌓으면 이후 작업에 쓸 컨텍스트가 줄어든다. <code>fork</code> 컨텍스트는 결과만 돌려받고, 메인 대화는 건드리지 않는다.
+    </p>
+    <div class="skill-grid">
+      <div class="skill-card">
+        <span class="skill-cmd">/checkpoint</span>
+        <div class="skill-desc">현재 세션을 정리하고 로그에 기록한 뒤 재개 프롬프트를 출력한다. 컨텍스트가 길어졌을 때 <code>/clear</code> 전에 호출한다.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/review-claude-config</span>
+        <span class="skill-ctx">fork</span>
+        <div class="skill-desc">프로젝트의 Claude Code 설정 파일 전체를 베스트 프랙티스 기준으로 검토하고 점수화된 보고서를 출력한다.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/check-freshness</span>
+        <span class="skill-ctx">fork</span>
+        <div class="skill-desc"><code>guides/</code> 파일의 <code>last-reviewed</code> 날짜를 확인해 경과 일수를 계산하고 오래된 파일을 감사한다.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/update-guides</span>
+        <span class="skill-ctx">fork</span>
+        <div class="skill-desc">공식 Claude Code 문서를 WebFetch로 가져와 로컬 가이드와 비교하고 업데이트를 제안한다.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PLUGINS ========== -->
+  <section id="plugins">
+    <h2 class="section-title">플러그인</h2>
+    <p style="font-size:0.875rem;color:#444;margin-bottom:1.25rem;">
+      Claude 단독 판단보다 독립적인 관점이 필요할 때, 그리고 반복되는 CLI 명령을 외워두지 않고 자연어로 처리하고 싶을 때 설치했다.
+    </p>
+    <div class="plugin-grid">
+      <div class="plugin-card">
+        <span class="plugin-id">codex@openai-codex</span>
+        <span class="plugin-ver">v1.0.4</span>
+        <div class="plugin-desc">
+          Claude가 작성한 코드를 Claude 자신이 검토하면 관점이 같아 사각지대가 생긴다. Codex에 위임하면 독립적인 시각에서 진단이 가능하다. 훅 연쇄로 코드 편집 세션 종료 시 자동으로 리뷰를 권장한다.
+        </div>
+      </div>
+      <div class="plugin-card">
+        <span class="plugin-id">vercel@claude-plugins-official</span>
+        <span class="plugin-ver">v0.42.1</span>
+        <div class="plugin-desc">
+          배포·환경 변수·로그 조회에 쓰는 CLI 플래그를 매번 찾아보는 대신, <code>/vercel:deploy</code> · <code>/vercel:status</code> 같은 스킬로 의도를 바로 전달한다.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== GUIDES ========== -->
+  <section id="guides">
+    <h2 class="section-title">가이드 최신화</h2>
+    <p style="font-size:0.875rem;color:#444;margin-bottom:1.25rem;">
+      10종 가이드는 전부 영문으로 작성되어 있다. Claude가 컨텍스트에 로드해 읽는 문서이므로 토큰 절감을 위해서다.
+      내용을 쌓아두는 용도가 아니라 최신화 사이클을 돌리기 위한 것이며,
+      각 파일 상단의 <code>&lt;!-- last-reviewed: YYYY-MM-DD --&gt;</code> 태그가 기준점 역할을 한다.
+    </p>
+    <div class="cycle-wrap">
+      <div class="cycle-step">
+        <span class="step-num">Step 1</span>
+        <code>/check-freshness</code> 실행<br>
+        <span style="font-size:0.75rem;color:#666;">last-reviewed 날짜 감사</span>
+      </div>
+      <div class="cycle-arrow-sep">&#8594;</div>
+      <div class="cycle-step">
+        <span class="step-num">Step 2</span>
+        <code>/update-guides</code> 실행<br>
+        <span style="font-size:0.75rem;color:#666;">공식 문서와 비교 제안</span>
+      </div>
+      <div class="cycle-arrow-sep">&#8594;</div>
+      <div class="cycle-step">
+        <span class="step-num">Step 3</span>
+        가이드 내용 편집<br>
+        <span style="font-size:0.75rem;color:#666;">last-reviewed 날짜 갱신</span>
+      </div>
+      <div class="cycle-arrow-sep">&#8594;</div>
+      <div class="cycle-step" style="border-color:#0b5fff;color:#0b5fff;">
+        <span class="step-num">반복</span>
+        다음 주기 대기<br>
+        <span style="font-size:0.75rem;color:#888;">태그 기반 자동 감지</span>
+      </div>
+    </div>
+
+    <details>
+      <summary>가이드 목록 전체 보기 (10종)</summary>
+      <ul class="guide-list">
+        <li><code>claude-md-authoring.md</code> — CLAUDE.md 작성 베스트 프랙티스</li>
+        <li><code>common-pitfalls.md</code> — 흔한 실수와 안티패턴</li>
+        <li><code>frontend-design.md</code> — 프론트엔드 워크플로</li>
+        <li><code>hooks.md</code> — 훅 라이프사이클 레퍼런스</li>
+        <li><code>memory-and-context.md</code> — 메모리와 컨텍스트 관리</li>
+        <li><code>official-sources.md</code> — 공식 문서 출처 인덱스</li>
+        <li><code>project-setup.md</code> — 프로젝트 초기 설정</li>
+        <li><code>prompt-engineering.md</code> — 프롬프트 엔지니어링</li>
+        <li><code>skills-and-commands.md</code> — 스킬과 커맨드 패턴</li>
+        <li><code>subagents.md</code> — 서브에이전트 활용 패턴</li>
+      </ul>
+    </details>
+  </section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+</body>
+</html>
