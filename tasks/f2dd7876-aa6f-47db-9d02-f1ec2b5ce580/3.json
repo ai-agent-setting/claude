@@ -1,0 +1,8 @@
+{
+  "id": "3",
+  "subject": "P8-3: 매크로 지표 → 시그널 스코어 조정 레이어",
+  "description": "MacroAdjustment 클래스 추가, pipeline.py 연동, 조정 규칙 상수화",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

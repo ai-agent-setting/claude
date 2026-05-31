@@ -1,0 +1,9 @@
+{
+  "id": "8",
+  "subject": "server.py — IMPLEMENTED_WRITE_TOOLS 갱신 및 agent_round 도구 등록",
+  "description": "새 4개 tool 이름을 IMPLEMENTED_WRITE_TOOLS에 추가하고 register_write_tools에서 호출.",
+  "activeForm": "MCP 서버 갱신 중",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

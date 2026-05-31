@@ -1,0 +1,9 @@
+{
+  "id": "13",
+  "subject": "P13-1: 알림 히스토리 뷰",
+  "description": "발송된 알림 이력을 대시보드에서 조회할 수 있도록 API와 UI를 추가한다.\n\n**현황**\n- `alert_log (id, alert_key, title, body, fired_at)` 테이블 있음 (cooldown deduplication용)\n- 조회 API 없음, channel 정보 없음\n\n**DB**\n1. `src/storage/migrations.py` — migration 추가\n   - `alert_log`에 `channel TEXT` 컬럼 추가 (`ALTER TABLE alert_log ADD COLUMN channel TEXT`)\n\n**백엔드**\n2. `src/jobs/alert_dispatcher.py` — `_log_alert` 함수 호출 시 channel 파라미터 추가\n   - Telegram 발송 → `channel='telegram'`, macOS → `channel='macos'`, 기록 전용 → `channel='internal'`\n3. `src/storage/database.py` — `get_alert_history(limit: int = 100, offset: int = 0) -> list[dict]` 추가\n   - `SELECT id, alert_key, title, body, channel, fired_at FROM alert_log ORDER BY fired_at DESC LIMIT ? OFFSET ?`\n4. `src/server/schemas.py` — `AlertHistoryItem(id, alert_key, title, body, channel, fired_at)`, `AlertHistoryResponse(items, total)` 추가\n5. `src/server/routers/alerts.py` — `GET /alerts/history?limit=100&offset=0` 추가\n\n**프런트**\n6. `index.html` — 알림 규칙 섹션 하단에 히스토리 테이블 컨테이너 추가\n7. `app.js` — `loadAlertHistory()` 함수\n   - 컬럼: 발송시각, 채널 뱃지, 제목, 내용 (body 100자 truncate)\n   - 알림 규칙 탭 진입 시 호출\n   - 페이지네이션 (더 보기 버튼)\n\n**검증**\n- 알림 발송 후 `GET /alerts/history` → 해당 건 포함 확인\n- channel 컬럼 정상 기록 확인",
+  "activeForm": "P13-1 알림 히스토리 구현 중",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

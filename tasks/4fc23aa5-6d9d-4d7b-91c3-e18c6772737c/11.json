@@ -1,0 +1,9 @@
+{
+  "id": "11",
+  "subject": "P12-2: 소르티노 / 칼마 비율 (모의투자)",
+  "description": "모의투자 성과 지표에 소르티노 비율과 칼마 비율을 추가한다.\n\n**현황**\n- Sharpe만 계산됨 (`compute_historical_risk`)\n- P11-3에서 `compute_sortino` 구현 예정 → 재사용\n\n**백엔드**\n1. `src/portfolio/risk.py` — `compute_calmar(snapshots: list[PaperPortfolioSnapshot]) -> float | None` 추가\n   - 연환산 수익률 / 최대낙폭(MDD) 절대값\n   - MDD는 `compute_drawdown_analysis`에서 이미 계산 중\n2. `src/portfolio/risk.py` — `compute_historical_risk` 반환 타입에 `sortino`, `calmar` 추가\n   - `HistoricalRiskMetrics` dataclass에 필드 추가\n3. `src/server/schemas.py` — `PaperPerformanceResponse`에 `sortino`, `calmar` 필드 추가\n4. `src/server/routers/paper.py` — `get_performance` 에서 `historical_risk.sortino`, `historical_risk.calmar` 응답에 포함\n\n**프런트**\n5. `app.js` — 모의투자 성과 카드에 Sortino, Calmar 수치 추가\n   - Sortino > 1.0: 녹색, < 0.5: 적색\n   - Calmar > 1.0: 녹색\n\n**검증**\n- `GET /paper/{id}/performance` → sortino, calmar 필드 포함 확인\n- 스냅샷 10개 이상 시 non-null 값 반환 확인",
+  "activeForm": "P12-2 Sortino/Calmar 구현 중",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

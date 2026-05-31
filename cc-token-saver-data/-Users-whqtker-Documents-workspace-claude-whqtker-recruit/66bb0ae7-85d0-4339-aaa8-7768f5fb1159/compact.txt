@@ -1,0 +1,92 @@
+# compact-format: 6
+
+[Session:66bb0ae7 2026-04-27T06:42:47Z L6]@@ User: "작업 요약 포트폴리오 스토리 기능을 중심으로 여러 작업을 진행했다. 전체 복사/붙여넣기, 이미지 Ctrl+V 업로드, 새 스토리 추가 시 빌더 자동 등록, 빌더 누락 스토리 데이터 보정을 완료했다. 스토리 미리보기의 빈 border 렌더링 버그와 [@F005] 출처 표기 노출 문제를 수정했고, References 섹션을 페이지 하단에 고정했다. 이력서, 자소서 등을 ai 에이전트가 읽는 일이 빈번할 것으로 예상하는가?"
+-> 1 AI response at line 13:
+1. "그렇다. `profile.json`과 `resume-data.json`은 거의 모든 SKILL의 전제 조건이라 `/resume-review`, `/jd-analysis`, [...truncated...] 동기화하는 게 중요하다. 최적화가 필요하면 SKILL별로 "이 SKILL은 profile.json의 어느 섹션만 읽으면 된다"는 명세를 추가하는 방향을 검토할 수 있다."
+
+[Session:66bb0ae7 2026-04-27T06:45:36Z L17] User: "'/Users/whqtker/Documents/workspace/claude-whqtker/recruit/.claude/skills/generate-resume/SKILL.md', '/Users/whqtker/Documents/workspace/claude-whqtker/recruit/.claude/skills/customize-design/SKILL.md', '/Users/whqtker/Documents/workspace/claude-whqtker/recruit/.claude/skills/design-resume/SKILL.md', ..[1lines omitted].. er/Documents/workspace/claude-whqtker/recruit/.claude/skills/sync-contributions/SKILL.md''/Users/whqtker/Documents/workspace/claude-whqtker/recruit/.claude/skills/story-bank-manage/SKILL.md' 스킬은 제거하라."
+-> 3 AI responses at lines 20-33:
+1. "`story-bank-manage` 스킬 디렉터리를 삭제하겠습니다."
+2. "CLAUDE.md의 스킬 목록에서도 해당 항목을 제거한다."
+3. "완료. `.claude/skills/story-bank-manage/` 디렉터리를 삭제하고 CLAUDE.md의 빠른 시작 예시와 SKILL 목록에서도 제거했다."
+
+[Session:66bb0ae7 2026-04-27T06:47:13Z L34] User: "너는 지금 스킬 하나만 삭제한 거 같은데 내가 이전에 명시한 스킬들 전부가 아니라"
+-> 3 AI responses at lines 39-49:
+1. "확인했다. 원래 목록에 나열된 스킬 전부를 제거해야 했다. `story-bank-manage`는 이미 삭제했으니 나머지를 처리한다."
+2. "남은 스킬은 `company-analysis`, `help`, `jd-analysis`, `jd-compare` 4개다. CLAUDE.md도 정리한다."
+3. "7개 스킬 디렉터리 삭제 완료. 남은 스킬: `company-analysis`, `jd-analysis`, `jd-compare`, `help`."
+
+[Session:66bb0ae7 2026-04-27T06:49:31Z L51] User: "프로필과 이력서 탭에서 내용이 겹치는 거 같은데 어떻게 생각하는가? 프로필 탭이 필요한가?"
+-> 3 AI responses at lines 55-70:
+1. "현재 UI 구조를 먼저 확인하겠다."
+2. "`ResumeData.tsx`도 확인해야 겹치는 부분을 정확히 파악할 수 있다."
+3. "파악 완료. 두 탭이 무엇을 다루는지 정리하면: **프로필 탭** (`Profile.tsx`) - 인적사항, 기술 스택(숙련도 포함), 학력, 프로젝트 - 같은 `profile.json`을 [...truncated...] 게 있다. 프로필 탭의 데이터 모델이 더 단순해서 "빠른 수정"용으로 쓰일 의도였을 가능성이 있다. 이 탭을 없애는 방향으로 갈지, 아니면 역할을 재정의할지 어떻게 생각하는가?"
+
+[Session:66bb0ae7 2026-04-27T06:50:55Z L73] User: "그냥 프로필 탭을 없애고 이력서만 남긴다."
+-> 4 AI responses at lines 75-122:
+1. "네비게이션 구조를 먼저 확인한다."
+2. "세 곳을 동시에 수정한다: `routes.ts`, `routeMeta.ts`, `Profile.tsx` 삭제."
+3. "routes.ts에서 route 항목도 제거한다."
+4. "완료. 사이드바에서 프로필 탭 제거, `/profile` 라우트 삭제, `Profile.tsx` 파일 삭제까지 처리했다."
+
+[Session:66bb0ae7 2026-04-27T06:58:10Z L125] User: "이력서와 포트폴리오의 미리보기를 피드백하라."
+-> 2 AI responses at lines 129-143:
+1. "미리보기 컴포넌트 코드를 확인한다."
+2. "두 컴포넌트를 모두 읽었다. 정리해서 피드백한다. --- ## 이력서 (ResumeA4) **구조적 문제** - `overflow: "hidden"` + 고정 높이 `297mm` [...truncated...] | | 중간 | 섹션 margin 과다, 불릿 강제 절단 | | 낮음 | `INTRODUCE` 오타, period 누락, 프로필 사진 경로 | 어떤 항목부터 수정할지 말해달라." [1 table, 2 list]
+
+[Session:66bb0ae7 2026-04-27T07:01:05Z L146] User: "1. 이력서 잘림"
+-> 0 AI responses
+
+[Session:66bb0ae7 2026-04-27T07:01:09Z L148] User: "1. 이력서 잘림"
+-> 0 AI responses
+
+[Session:66bb0ae7 2026-04-27T07:01:11Z L150] User: "1. 이력서 잘림"
+-> 0 AI responses
+
+[Session:66bb0ae7 2026-04-27T07:01:23Z L152] User: "1. 이력서 잘림 2. 이력서에 수상 또한 나오도록"
+-> 0 AI responses
+
+[Session:66bb0ae7 2026-04-27T07:02:02Z L154] User: "[List]"
+-> 7 AI responses at lines 156-195:
+1. "포트폴리오 미리보기 줌 방식도 확인한다."
+2. "4개 수정 사항을 파악했다. 동시에 진행한다. - `ResumeA4.tsx`: overflow 제거, 수상 섹션 추가, INTRODUCE → SUMMARY 오타 수정 - `resumeProfileMapper.ts`: awards 매핑 추가 - `Resume.tsx`: 줌 버튼 → 슬라이더로 교체" [1 list]
+3. "이제 수상 섹션 렌더링 추가 및 INTRODUCE → SUMMARY 수정이다."
+4. "이제 `resumeProfileMapper.ts`에 awards 매핑을 추가한다."
+5. "마지막으로 `Resume.tsx`의 줌 버튼을 슬라이더로 교체한다."
+6. "타입 오류가 없는지 확인한다."
+7. "타입 오류 없음. 4개 항목 모두 완료됐다. - **잘림 수정**: `height: "297mm"` → `minHeight`, `overflow: "hidden"` 제거 - [...truncated...] 아래) - **오타**: `INTRODUCE` → `SUMMARY` - **줌 통일**: 이력서 미리보기의 버튼 2개를 슬라이더로 교체 (포트폴리오 빌더와 동일한 방식)" [1 list]
+
+[Session:66bb0ae7 2026-04-27T07:07:30Z L198] User: "jd 관리에서 jd 원본과 분석 결과 또한 기업 분석 문서처럼 정돈된 형식으로 나오도록. 현재는 md 문법 그대로 보여지고 있음"
+-> 10 AI responses at lines 201-255:
+1. "현재 JD 관리 페이지 코드를 확인한다."
+2. "기존 마크다운 렌더러가 있는지 확인한다."
+3. "기업 분석 페이지가 마크다운을 어떻게 렌더링하는지 확인한다."
+4. "`report-parser`가 어떤 함수를 export하는지 확인한다."
+5. "`TokenRenderer`와 `renderInlineMarkdown`을 공유 컴포넌트로 추출하고, JD 페이지에 적용한다."
+6. "이제 `CompanyReports.tsx`를 공유 컴포넌트로 교체하고, `JobDescriptions.tsx`에 마크다운 렌더러를 적용한다."
+7. "이제 `JobDescriptions.tsx`에 마크다운 렌더러를 적용한다."
+8. "아직 `JobDescriptions.tsx`의 `<pre>` 부분을 교체하지 않았다. 지금 적용한다."
+9. "타입 오류 없음. 변경 내용을 최종 확인한다."
+10. "완료. 변경 사항 요약: - `MarkdownRenderer.tsx` 신규 생성 — `renderInlineMarkdown`과 `TokenRenderer`를 공유 컴포넌트로 추출 [...truncated...] `<pre>` 제거, `tokenize` + `TokenRenderer`로 교체 JD 원본과 분석 결과 모두 헤딩·표·목록·볼드·코드 등이 기업 분석과 동일한 스타일로 렌더링된다." [1 list]
+
+[Session:66bb0ae7 2026-04-27T07:12:57Z L258] User: "자꾸 senera mcp 연결되면 웹 ui가 뜨는데 안 뜨도록"
+-> 2 AI responses at lines 269-276:
+1. "Serena MCP 설정을 확인한다."
+2. "이 프로젝트에 `.mcp.json`이 있는지도 확인한다."
+
+[Session:66bb0ae7 2026-04-27T10:21:11Z L282] User: "작업 계속 진행하라"
+-> 4 AI responses at lines 284-299:
+1. "`.mcp.json`의 Serena args에 `--no-web-ui`를 추가한다."
+2. "quiz 프로젝트에도 동일하게 적용한다. `.claude.json`의 quiz 항목에도 `--no-web-ui`가 없다."
+3. "quiz 프로젝트는 `.claude.json`에 직접 설정돼 있다. 안전하게 수정한다."
+4. "완료. 두 곳 모두 수정했다. - **recruit 프로젝트** `.mcp.json` → Serena args에 `--no-web-ui` 추가 - **quiz 프로젝트** `~/.claude.json` → Serena args에 `--no-web-ui` 추가 Claude Code를 재시작하면 다음 세션부터 Serena 연결 시 웹 UI가 뜨지 않는다."
+
+[Session:66bb0ae7 2026-04-28T00:37:06Z L313] User: "/checkpoint"
+-> 2 AI responses at lines 327-333:
+1. "로그를 기록한다."
+2. "--- **세션 재개 컨텍스트 [2026-04-28]** **작업 요약** 불필요한 스킬 8종과 프로필 탭을 제거해 구조를 단순화했다. 이력서 미리보기의 overflow 잘림·수상 [...truncated...] !== "training"` 항목 미렌더링이 의도된 설계인지 확인) --- 로그 기록 완료. 이제 `/clear` 를 실행하고, 위 재개 프롬프트를 첫 메시지로 붙여넣으세요." [1 list]
+
+---
+# Session references:
+- Session 66bb0ae7 → /Users/whqtker/.claude/projects/-Users-whqtker-Documents-workspace-claude-whqtker-recruit/66bb0ae7-85d0-4339-aaa8-7768f5fb1159.jsonl
+# [Session:{sid} {ISO} L{n}] headers link to original transcripts at ~/.claude/projects/{projectHash}/{sessionId}.jsonl — use L{n} to read the exact line.

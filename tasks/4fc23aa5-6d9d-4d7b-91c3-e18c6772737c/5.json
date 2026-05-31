@@ -1,0 +1,9 @@
+{
+  "id": "5",
+  "subject": "P10-2: 에이전트 의견 시계열 뷰",
+  "description": "동일 종목에 대한 에이전트 의견 변화를 시간순으로 조회하고 타임라인으로 표시한다.\n\n**현황**\n- `agent_opinions`에 `created_at` 있음\n- 라운드 내 개별 의견 조회만 가능, 종목별 시계열 API 없음\n\n**백엔드**\n1. `src/storage/database.py` (또는 screening/analysis facade) — `get_opinion_timeline(symbol, days) -> list[dict]` 추가\n   - `opinion_rounds` JOIN `agent_opinions` WHERE symbol = ? AND created_at >= now - days\n   - 반환: `[(created_at, agent_id, action, confidence, thesis_truncated)]`\n2. `src/server/schemas.py` — `OpinionTimelineItem(created_at, agent_id, action, confidence, thesis)`, `OpinionTimelineResponse(symbol, items)` 추가\n3. `src/server/routers/agent.py` — `GET /agent/opinion-timeline/{symbol}?days=90` 추가\n\n**프런트**\n4. `index.html` — 종목 상세 섹션에 의견 타임라인 패널 컨테이너 추가\n5. `app.js` — `loadOpinionTimeline(code)` 함수\n   - 날짜 그룹별 에이전트 뱃지 (action 색상: BUY=녹, SELL=적, HOLD=회)\n   - confidence 퍼센트 표시, thesis 툴팁\n   - `loadStockDetail` 호출 시 함께 호출\n\n**검증**\n- `GET /agent/opinion-timeline/005930?days=90` → 의견 목록 반환\n- 대시보드 종목 상세에서 타임라인 렌더링 확인",
+  "activeForm": "P10-2 의견 타임라인 구현 중",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

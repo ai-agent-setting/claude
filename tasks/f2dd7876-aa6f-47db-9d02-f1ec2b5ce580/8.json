@@ -1,0 +1,8 @@
+{
+  "id": "8",
+  "subject": "P8-8: WebSocket 뉴스·시그널 이벤트 push",
+  "description": "/ws/events 엔드포인트, news/signal_change 이벤트, 토스트 알림 UI",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

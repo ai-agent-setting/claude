@@ -1,0 +1,9 @@
+# compact-format: 6
+
+[Session:f85a8fc4 2026-04-26T06:30:04Z L4] User: "/exit"
+-> 0 AI responses
+
+---
+# Session references:
+- Session f85a8fc4 → /Users/whqtker/.claude/projects/-Users-whqtker-Documents-workspace-claude-whqtker-recruit-recruit-ui/f85a8fc4-eae1-4d40-a98e-fa7daf5e8a32.jsonl
+# [Session:{sid} {ISO} L{n}] headers link to original transcripts at ~/.claude/projects/{projectHash}/{sessionId}.jsonl — use L{n} to read the exact line.

@@ -1,0 +1,9 @@
+{
+  "id": "6",
+  "subject": "P10-3: 멀티 타임프레임 분석",
+  "description": "일봉 외 주봉·월봉의 기술적 신호를 병렬 계산하여 종목 상세에 표시한다.\n\n**현황**\n- 일봉 기준 기술 분석만 존재\n- `GET /stocks/{code}/ohlcv` 로 OHLCV 시계열 가져올 수 있음\n- `compute_indicators_from_series`는 없고 `TechnicalAnalyzer.analyze()` 가 전체 파이프라인을 처리\n\n**백엔드**\n1. `src/analysis/technical.py` — `compute_multi_timeframe_signals(ohlcv_df: pd.DataFrame) -> dict` 추가\n   - 입력: 일봉 DataFrame (date, open, high, low, close, volume)\n   - 주봉: `resample('W-FRI').agg(...)`, 월봉: `resample('ME').agg(...)`\n   - 각 타임프레임: RSI(14), MACD 신호선 교차, Bollinger 위치(상단/중간/하단) 계산\n   - 반환: `{daily: {rsi, macd_cross, bb_position}, weekly: {...}, monthly: {...}}`\n2. `src/server/schemas.py` — `TimeframeSignals(rsi, macd_cross, bb_position)`, `MultiTimeframeResponse(symbol, daily, weekly, monthly)` 추가\n3. `src/server/routers/stocks.py` — `GET /stocks/{code}/multi-timeframe` 추가\n   - 내부에서 `_fetch_ohlcv_df` 재사용 (count=504 — 2년치)\n   - `compute_multi_timeframe_signals` 호출\n\n**프런트**\n4. `index.html` — 종목 상세 섹션에 타임프레임 비교 카드 컨테이너 추가\n5. `app.js` — `loadMultiTimeframe(code)` 함수\n   - 3열 그리드: 일봉 / 주봉 / 월봉\n   - 각 열: RSI 수치 + 색상, MACD 교차 방향 화살표, Bollinger 위치 아이콘\n\n**검증**\n- `GET /stocks/005930/multi-timeframe` → 3 타임프레임 신호 반환\n- pandas resample 결과 단위 테스트 (일봉 252개 → 주봉 ~52개 확인)",
+  "activeForm": "P10-3 멀티 타임프레임 구현 중",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

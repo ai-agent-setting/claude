@@ -1,0 +1,8 @@
+{
+  "id": "4",
+  "subject": "P8-4: 포트폴리오 상관관계 행렬",
+  "description": "compute_correlation_matrix, /api/portfolio/correlation 엔드포인트, 히트맵 UI",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

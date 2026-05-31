@@ -1,0 +1,60 @@
+# compact-format: 6
+
+[Session:8bd7230a 2026-05-24T02:17:43Z L7] User: "/cc-token-saver:continue 1"
+-> 1 AI response at line 28:
+1. "--- [Context restored by /continue] - 1 session loaded (today 10:34 → today 11:17) - [Session:1c2d1fa1 [...truncated...] > 이전 대화에서 ___ 관련 내용이 있었을 것이다. 관련 메시지를 텍스트에서 찾고, 일부가 잘렸다면 세션 ID와 라인 번호로 원본 트랜스크립트에서 전체 내용을 가져와라." [3 list]
+
+[Session:8bd7230a 2026-05-24T02:19:53Z L32]@@^ User: "열린 이슈 중 적절한 3개 골라 구현 후 이슈 닫아라"
+-> 17 AI responses at lines 43-308:
+1. "현재 코드 구조를 확인하고 구현 난이도를 파악한다."
+2. "**#251, #252, #246** 3개 선정: - **#251**: CLI `__init__.py` 재수출 제거 (리팩터링) - **#252**: 뉴스 소스 적응형 우선순위 선택기 (`AdaptiveSourceSelector`) - **#246**: LLM 백엔드 추상화 문서화 (코드는 이미 완성, docs만 추가)" [1 list]
+3. "### Issue #251 — CLI `__init__.py` 재수출 제거 현재 파일 전체를 확인한다."
+4. "구조 파악 완료. `__init__.py`를 재작성하고 관련 테스트를 업데이트한다."
+5. "이제 영향받는 테스트 파일을 업데이트한다."
+6. "`test_cli_agent_context.py` — `cli.cmd_*` 호출을 직접 import로 교체한다."
+7. "`_pkg.X` 패턴이 `Settings`, `Database` 등 5개 항목에 의존하므로, 이 항목들만 유지하고 나머지를 제거한다."
+8. "`test_cli.py`도 같은 방식으로 업데이트한다."
+9. "전체 테스트 실행으로 회귀 없는지 확인한다."
+10. "867개 전원 통과. 이슈를 닫는다."
+11. "--- ### Issue #252 — `AdaptiveSourceSelector` 구현 관련 파일을 확인한다."
+12. "`NewsCollector`에 `AdaptiveSourceSelector` 옵션을 추가하고 타이밍을 측정한다."
+13. "이제 단위 테스트를 작성한다."
+14. "전체 테스트로 회귀 확인 및 lint 점검을 병렬로 실행한다."
+15. "--- ### Issue #246 — 뉴스 임팩트 백엔드 추상화 문서화 구현이 완료된 상태를 확인하고 docs 파일을 작성한다."
+16. "커밋한다."
+17. "3개 이슈 구현 완료. 요약: | 이슈 | 변경 | 효과 | |------|------|------| | **#251** | `src/cli/__init__.py` — command [...truncated...] `docs/news-impact-backends.md` 작성 | 백엔드 추상화 완료 선언, 새 백엔드 추가 3단계 가이드 문서화 | 전체 테스트 881개 통과, lint 통과." [1 table]
+
+[Session:8bd7230a 2026-05-24T02:50:16Z L312] User: "나머지 이슈들 중 3개 골라 구현 후 이슈 닫아라"
+-> 27 AI responses at lines 362-600:
+1. "**#240, #248, #250** 선정."
+2. "### Issue #240 — Prometheus `/metrics` 엔드포인트"
+3. "이제 메트릭 모듈과 라우터를 작성한다."
+4. "HTTP 요청 시간 미들웨어와 `get_recent_analysis_records` DB 메서드가 필요한지 확인한다."
+5. "`get_recent_analysis_records` DB 메서드를 추가한다."
+6. "`Database` 파사드에 메서드를 노출한다."
+7. "`metrics.py`의 `refresh_analysis_metrics`를 업데이트하고, HTTP 미들웨어를 `app.py`에 추가한다."
+8. "`app.py`에 metrics 라우터와 HTTP 타이밍 미들웨어를 추가한다."
+9. "`pyproject.toml`에 `prometheus-client` 의존성을 추가한다."
+10. "이미 추가됨. 테스트를 실행한다."
+11. "--- ### Issue #248 — 합의 알고리즘 확장 현재 구현 상태를 파악한다."
+12. "이제 migration v17, 설정, MCP tool 업데이트, 대시보드 표시를 순서대로 구현한다. **v17 마이그레이션** — `opinion_rounds.consensus_json` 컬럼 추가:"
+13. "**`Settings`에 `consensus_algo` 필드 추가:**"
+14. "**`DatabaseOnlySettings`에도 `consensus_algo` 노출** (MCP 서버용):"
+15. "`MCPServerSettings`에 `consensus_algo` 추가 및 `complete_opinion_round` tool 업데이트:"
+16. "이제 `agent_round.py` MCP tool에서 majority 알고리즘 추가, `complete_opinion_round`에 consensus 저장을 구현한다."
+17. "`register_agent_round_tools`에 `consensus_algo` 파라미터를 추가하고, `complete_opinion_round` tool에서 consensus를 저장 및 반환한다."
+18. "`complete_opinion_round` tool에서 consensus 계산·저장·반환:"
+19. "`database.py`와 repository의 `complete_opinion_round`에 `consensus` 파라미터를 추가한다."
+20. "`OpinionRoundRecord`에 `consensus` 필드를 추가하고, `_to_round` 변환 메서드를 업데이트한다."
+21. "`_to_round` 변환에서 `consensus_json` 필드를 읽도록 업데이트:"
+22. "`server.py`에서 `register_agent_round_tools`에 `consensus_algo` 전달:"
+23. "이제 대시보드 에이전트 카드에 consensus 결과를 표시한다. agent 라우터를 확인한다."
+24. "completed 라운드에서 저장된 consensus를 사용하도록 라우터를 업데이트한다."
+25. "테스트를 실행한다."
+26. "두 가지 오류를 수정한다. `cfg` scope 문제와 `metadata_json` NOT NULL 제약:"
+27. "Prompt is too long"
+
+---
+# Session references:
+- Session 8bd7230a → /Users/whqtker/.claude/projects/-Users-whqtker-Documents-workspace-toy-project-trade/8bd7230a-faa0-44c2-b717-82b9d00b3480.jsonl
+# [Session:{sid} {ISO} L{n}] headers link to original transcripts at ~/.claude/projects/{projectHash}/{sessionId}.jsonl — use L{n} to read the exact line.

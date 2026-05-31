@@ -1,0 +1,8 @@
+{
+  "id": "2",
+  "subject": "P8-2: 캔디데이트 편입 후 성과 추적",
+  "description": "migration: entry_signal/entry_score 컬럼 추가, screening API 응답에 return_since_entry 필드 추가, UI 렌더링",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

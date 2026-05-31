@@ -1,0 +1,5 @@
+ts,model,input,cc,cc5m,cc1h,cr,out,cost,win,rl,evt,line,req
+1779236997,claude-opus-4-7,6,12377,12377,0,0,376,0.086786,1779235200,,heuristic_resume,8,req_011CbCsmVwNSr9Q6xBZDp299
+1779237003,,1,5826,5826,0,12377,500,0.055106,,,,19,req_011CbCsmvymDTBfmJkRVLcjh
+1779237013,,1,7823,7823,0,18203,1,0.058025,,,,28,req_011CbCsnRDtThy7KYEFaQtNx
+1779237045,,1,5163,5163,0,26026,1975,0.094662,,,,30,req_011CbCso992vPzgoethRWt7q

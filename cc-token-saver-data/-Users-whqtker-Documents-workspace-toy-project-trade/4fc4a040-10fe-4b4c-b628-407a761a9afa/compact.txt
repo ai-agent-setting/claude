@@ -1,0 +1,37 @@
+# compact-format: 6
+
+[Session:4fc4a040 2026-05-20T03:00:20Z L6]@@ User: "대시보드에서 초기 차트가 보여질 때 분명 캔들 개수 설정하지 않았나? 여전히 처음 로드될 때 전체 캔들이 보이는데"
+-> 5 AI responses at lines 12-34:
+1. "초기 로드 시 캔들 개수 제한 관련 코드를 확인해 보겠습니다."
+2. "초기 뷰 설정 코드를 더 자세히 확인합니다."
+3. "Chart.js 버전과 초기 렌더링 타이밍 문제를 확인합니다."
+4. "원인 파악했습니다. `zoomScale`을 `new Chart()` 직후에 호출하는데, Chart.js 초기 렌더 애니메이션이 완료되면서 스케일을 덮어씁니다. `animation.onComplete`의 `ctx.initial` 플래그를 이용해 첫 렌더 완료 후에 zoom을 적용해야 합니다."
+5. "수정 완료. 기존 방식이 실패한 이유와 변경 내용: **문제:** `new Chart()` 직후 `zoomScale()`을 호출하면 Chart.js 초기 렌더 애니메이션이 [...truncated...] Scale` 호출을 이동. `ctx.initial === true`인 경우(첫 렌더 완료 시점)에만 실행하므로, 이후 pan/zoom으로 발생하는 업데이트에서는 동작하지 않습니다."
+
+[Session:4fc4a040 2026-05-20T05:13:26Z L42] User: "차트 로드될 때 전체 캔들 나오고 정해진 개수만큼 캔들이 나오게 된다. 애초에 처음부터 정해진 캔들이 나오도록"
+-> 3 AI responses at lines 46-57:
+1. "`animation.onComplete`는 애니메이션이 끝난 후 zoom을 적용하기 때문에 여전히 전체 → 축소 플래시가 발생합니다. 초기 렌더 자체에서 정해진 범위만 그리려면 `animation: false`로 즉시 렌더링되게 하고, `zoomScale`을 첫 렌더 전에 적용해야 합니다."
+2. "그다음 `zoomScale`을 차트 생성 직후로 복원합니다."
+3. "`animation: false`로 설정하면 Chart.js가 RAF 애니메이션 없이 즉시 렌더링하므로, `zoomScale` 호출이 첫 렌더 상태에 반영됩니다. 두 차트 모두 `animation: false`를 추가해 거래량 차트도 동기화했습니다."
+
+[Session:4fc4a040 2026-05-20T09:48:20Z L61] User: "rsa 또한 차트로 표기되도록 하고 싶다."
+-> 14 AI responses at lines 65-183:
+1. "RSI 차트 추가 작업으로 이해했습니다. (rsa → rsi) 먼저 OHLCV API와 차트 렌더 코드에서 RSI가 어떻게 다뤄지는지 탐색하겠습니다."
+2. "핵심 파일 몇 곳을 직접 확인해 패턴을 정확히 맞추겠습니다."
+3. "이제 충분한 정보가 모였습니다. 한 가지 선택지만 사용자에게 확인하고 플랜을 작성하겠습니다."
+4. "순서대로 구현하겠습니다. 백엔드부터 시작합니다. **1. `rsi_series` 헬퍼 추가**"
+5. "**2. 스키마에 `rsi` 필드 추가**"
+6. "**3. 라우터에 RSI 계산 및 응답 추가**"
+7. "이제 프론트엔드를 수정합니다. 현재 HTML 구조를 확인하겠습니다."
+8. "**4. HTML — RSI 캔버스 추가**"
+9. "**5. JS — 상태 변수, `_syncVolumeZoom`, `resetPriceZoom` 수정**"
+10. "**6. JS — RSI 차트 생성 (destroy + 생성 블록)**"
+11. "이제 RSI 차트 생성 블록을 `_volumeChart` 블록 뒤에 추가합니다."
+12. "이제 린트와 테스트를 돌려 확인합니다."
+13. "린트 통과, 테스트 804개 모두 통과. Pylance 경고(line 201)는 기존 코드의 동적 접근 패턴으로 내가 도입한 것이 아닙니다. 최종 변경 결과를 확인합니다."
+14. "Pylance 경고는 `ta` 라이브러리의 동적 모듈 접근 방식 문제로 파일 전반에 걸친 기존 패턴입니다(`ta.trend`, `ta.volatility`도 동일하게 발생). 구현 [...truncated...] RSI 리셋, 30/70 가이드 라인 | 서버 재시작 후 종목 조회 시 가격/거래량 아래에 RSI 패널(0–100, 30/70 점선)이 표시되며 pan/zoom도 동기화됩니다." [1 table]
+
+---
+# Session references:
+- Session 4fc4a040 → /Users/whqtker/.claude/projects/-Users-whqtker-Documents-workspace-toy-project-trade/4fc4a040-10fe-4b4c-b628-407a761a9afa.jsonl
+# [Session:{sid} {ISO} L{n}] headers link to original transcripts at ~/.claude/projects/{projectHash}/{sessionId}.jsonl — use L{n} to read the exact line.

@@ -1,0 +1,20 @@
+# compact-format: 6
+
+[Session:b1e8d9f4 2026-05-05T10:19:10Z L7] User: "/model"
+-> 0 AI responses
+
+[Session:b1e8d9f4 2026-05-05T10:19:33Z L10]@@! User: "지금 70퍼 정도에 컨텍스트 도달하면 오토컴팩트하고 있다. 알림은 오는데, 나는 알림만 오도록 하고 싶다."
+-> 4 AI responses at lines 15-28:
+1. "현재 설정을 먼저 확인하겠습니다."
+2. "`autoCompact` 설정을 꺼야 합니다. settings.json에 `"autoCompact": false`를 추가하겠습니다."
+3. "스키마에서 올바른 필드명은 `autoCompact`가 아니라 `autoCompactEnabled`입니다."
+4. "완료했습니다. `"autoCompactEnabled": false`를 추가해 오토컴팩트를 껐습니다. 이제 컨텍스트 70% 도달 시 알림만 오고 자동으로 컴팩트되지 않습니다."
+
+[Session:b1e8d9f4 2026-05-07T14:09:20Z L33] User: "내가 클로드코드를 어떻게 사용하고 있는지 4문장 정도로 정리하려고 한다. 하네스 엔지니어링 관점에서 적어봐라"
+-> 1 AI response at line 45:
+1. "`~/.claude`를 단순 설정 파일이 아닌 **하네스 코드베이스**로 관리한다. CLAUDE.md와 `rules/`는 토큰 예산을 의식해 직접 최적화하고, `settings.json`의 [...truncated...] 자기참조 루프를 돌린다. 컨텍스트 소모는 오토컴팩트 대신 `/checkpoint` + 수동 세션 분리로 직접 제어해, 각 세션이 어디서 끊겼는지 로그로 추적할 수 있게 유지한다."
+
+---
+# Session references:
+- Session b1e8d9f4 → /Users/whqtker/.claude/projects/-Users-whqtker--claude/b1e8d9f4-d693-4bec-82e3-f851dd735ba0.jsonl
+# [Session:{sid} {ISO} L{n}] headers link to original transcripts at ~/.claude/projects/{projectHash}/{sessionId}.jsonl — use L{n} to read the exact line.

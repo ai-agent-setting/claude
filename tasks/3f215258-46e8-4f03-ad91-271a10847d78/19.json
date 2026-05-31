@@ -1,0 +1,9 @@
+{
+  "id": "19",
+  "subject": "#302 Dashboard OHLCV chart with Lightweight Charts",
+  "description": "Add OHLCV API endpoint, integrate TradingView Lightweight Charts in dashboard, SMA overlays, signal markers, portfolio equity curve.",
+  "activeForm": "Building OHLCV chart",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

@@ -1,0 +1,15 @@
+{
+  "pid": 62914,
+  "version": "2.1.158",
+  "jsonPath": "/Users/whqtker/.claude/daemon.json",
+  "logPath": "/Users/whqtker/.claude/daemon.log",
+  "startedAt": 1780111458155,
+  "origin": "transient",
+  "spawnedBy": {
+    "label": "claude",
+    "cwd": "/Users/whqtker/Documents/workspace/toy_project/trade",
+    "pid": 33124
+  },
+  "procStart": "Sat May 30 03:24:15 2026",
+  "launchTarget": "/Users/whqtker/.local/share/claude/versions/2.1.158"
+}

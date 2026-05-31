@@ -1,0 +1,9 @@
+{
+  "id": "14",
+  "subject": "#297 Multiple screening strategy profiles",
+  "description": "Add ScreeningStrategy ABC, momentum/value/garp strategies, CLI --strategy flag, screening_profiles table usage.",
+  "activeForm": "Implementing screening strategies",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

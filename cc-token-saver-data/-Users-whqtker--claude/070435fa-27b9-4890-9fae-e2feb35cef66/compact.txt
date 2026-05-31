@@ -1,0 +1,139 @@
+# compact-format: 6
+
+[Session:070435fa 2026-05-02T07:09:13Z L8]@@ User: "세션 재개 컨텍스트 [2026-05-02] 작업 요약 Claude Code 환경을 전반적으로 개선했다. 컨텍스트 70% 도달 알림 훅, Stop·Notification 알림 훅을 settings.json에 추가하고, OpenAI Codex 플러그인을 설치해 Stop-time Review Gate를 활성화했다. Codex 사용 best practice를 정리하고, 사용법 문서(README.md)를 작성했다. 마지막으로 매 세션 자동 로드되는 CLAUDE.md와 rules/ 파일을 영문 전환해 고정 작성했다. 마지막으로 매 세션 자동 로드되는 CLAUDE.md와 rules/ 파일을 영문 전환해 고정 토큰 비용을 39% 절감했다. 미완료 태스크 - 없음 다음 할 일 [List]"
+-> 2 AI responses at lines 12-20:
+1. "현재 상태를 확인해보겠습니다."
+2. "세 가지 항목에 대한 검토 결과: --- **1. `/check-freshness` — 할 가치 있음** `hooks.md`, `official-sources.md`, `proje [...truncated...] --- **추천 순서:** `hooks.md` 등 낡은 가이드 4개 업데이트 → README 상태 확인 → OWASP는 보류. `/check-freshness` 먼저 실행할까?"
+
+[Session:070435fa 2026-05-02T07:13:37Z L28] User: "/model"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-02T07:13:59Z L32]! User: "/check-freshness"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-02T07:17:29Z L36] User: "관련 md 파일들은 토큰 절약을 위해 영어로 작성 안 해도 되는가?"
+-> 1 AI response at line 40:
+1. "**영어로 바꿀 필요 없다.** 이유는 구조적 차이에 있다. - **CLAUDE.md / rules/*.md**: 매 세션마다 자동으로 컨텍스트에 로드된다. 모든 대화에서 고정 [...truncated...] **온디맨드 비용**이라 세션 고정 토큰에 영향을 주지 않는다. 자주 호출하지 않는 한 영문화해도 절감 효과가 미미하고, 한국어로 유지하는 편이 직접 작성·수정할 때 더 편하다."
+
+[Session:070435fa 2026-05-02T07:19:03Z L44] User: "현재 일정 컨텍스트 용량이 차면 알림이나 메시지 주도록 설정한 거 같은데 이게 동작하지 않는다. 관련하여 사용자가 인지하지 못해 컨텍스트가 꽉 차는 일이 발생했다. 어떻게 해결하는 것이 좋을까? checkpoint 스킬을 사용하여 관리하는 것은 변함없다."
+-> 2 AI responses at lines 46-50:
+1. "현재 설정 먼저 확인해보겠습니다."
+2. "문제의 근본 원인이 보인다. `PreCompact` 훅에서 `exit 2`로 자동 컴팩션을 막고 있어서, 알림을 놓치면 컨텍스트가 100%까지 그냥 차버린다. 안전망이 없는 [...truncated...] 컴팩션이 뒤를 받쳐주는 구조가 더 안전하다. 적용할까? A로 진행하면 `exit 2` 제거 + `say "체크포인트를 실행하세요"` 추가로 settings.json을 수정한다." [2 list]
+
+[Session:070435fa 2026-05-02T07:21:39Z L55] User: "A로 진행하라. say는 빼라"
+-> 1 AI response at line 63:
+1. "`exit 2` 제거 완료. 이제 컨텍스트 70% 도달 시 알림은 뜨되, 자동 컴팩션은 정상 진행된다. /checkpoint를 놓쳐도 컨텍스트가 100%로 차는 일은 없다."
+
+[Session:070435fa 2026-05-02T07:22:55Z L66] User: "그리고 지금 각종 알림 자체가 안 온다. 권한 허용 등 전부 알림이 안 온다. 관련해서 확인해봐라"
+-> 3 AI responses at lines 70-101:
+1. "osascript가 직접 실행되는지부터 확인한다."
+2. "원인을 찾았다. `$TERM_PROGRAM=vscode` — VS Code 통합 터미널에서 실행 중이라 `osascript` 알림이 VS Code 프로세스에 귀속된다. 그런데 알림 [...truncated...] 알림이 차단되고 있다. **해결 방법:** 시스템 설정 → 알림 → **Visual Studio Code** → 알림 허용 ON 직접 확인해달라. 설정 이후 터미널에서 테스트:"
+3. "VS Code 알림 권한을 켠 후 이 명령을 `! osascript -e 'display notification "테스트" with title "Claude Code"'`로 직접 [...truncated...] 뜨는지 확인해봐라. 권한 설정 후에도 안 된다면, Claude Code 데스크탑 앱으로 전환하거나 iTerm2에서 실행하는 방법도 있다 — 그쪽은 이미 알림 권한이 등록돼 있다."
+
+[Session:070435fa 2026-05-02T07:31:10Z L106] User: "다시 보내봐 방해금지모드여서 그런가봐"
+-> 1 AI response at line 110:
+1. "보냈다. 알림 왔는지 확인해봐라."
+
+[Session:070435fa 2026-05-02T07:31:23Z L114] User: "알림 왔다."
+-> 1 AI response at line 115:
+1. "방해금지 모드가 원인이었다. 추가 설정 변경 없이 현재 hooks 구성 그대로 쓰면 된다. 정리하면: - PreCompact 훅 `exit 2` 제거 완료 — 자동 컴팩션이 안전망으로 동작 - 알림 자체는 정상 작동 중 — 방해금지 모드만 주의"
+
+[Session:070435fa 2026-05-03T05:16:12Z L120] User: "문서 작성 규칙이 최신 best practice를 준수하는지 확인하라."
+-> 1 AI response at line 128:
+1. "업데이트 보고서가 나왔다. 주요 내용 요약: **즉시 수정 필요 (정보 오류·중요 누락)** - `skills-and-commands.md`: `name` 필드가 이제 선택사항, [...truncated...] - `common-pitfalls.md`: CLAUDE.md 정리 시 hook 전환 기준 추가 --- 순서대로 가이드 파일들을 업데이트할까? 아니면 특정 파일부터 먼저 할까?" [2 list]
+
+[Session:070435fa 2026-05-03T05:19:58Z L131] User: "문서 업데이트 진행하라. 문서가 한글이면 영문으로 작성하라."
+-> 4 AI responses at lines 134-203:
+1. "모든 가이드 파일을 병렬로 읽고 시작한다."
+2. "모든 파일 내용을 확인했다. 9개 파일을 병렬로 업데이트한다."
+3. "계속 영문으로 작성 중이다. 나머지 8개 파일 병렬 업데이트한다."
+4. "마지막으로 `submodule-usage.md`도 확인한다."
+
+[Session:070435fa 2026-05-03T05:28:18Z L208] User: "[Request interrupted by user for tool use]"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-03T05:28:27Z L209] User: "계속 진행하라"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-03T05:28:46Z L213] User: "[Request interrupted by user for tool use]"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-03T05:28:54Z L215] User: "서브모듈 문서는 불필요하니 내가 제거했다"
+-> 1 AI response at line 217:
+1. "확인했다. 나머지 8개 파일 업데이트 완료 상태를 정리하면: | 파일 | 변경 내용 | |---|---| | `hooks.md` | 이벤트 목록 현행화(PostToolUse 등), [...truncated...] | `common-pitfalls.md` | 2회 교정 기준 명확화, hook 전환 기준 추가, 영문 전환 | | `submodule-usage.md` | 사용자 직접 제거 |" [1 table]
+
+[Session:070435fa 2026-05-03T08:43:57Z L223] User: "클로드코드로 프론트엔드 디자인을 어떻게 잘 만드는가? 관련 best practice를 찾아라."
+-> 2 AI responses at lines 227-236:
+1. "프론트엔드 디자인 관련 기존 가이드와 공식 문서를 병렬로 조사한다."
+2. "조사 완료. 핵심 내용을 정리해 계획 파일을 작성한다."
+
+[Session:070435fa 2026-05-03T08:47:32Z L246] User: "[Request interrupted by user for tool use]"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-03T08:47:39Z L249] User: "/model"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-03T08:47:44Z L252]! User: "계획 기반으로 작업 진행하라"
+-> 1 AI response at line 260:
+1. "`~/.claude/guides/frontend-design.md` 생성 완료. 주요 내용: 1. **Visual Verification Loop** — 스크린샷 비교가 핵심 [...truncated...] `/frontend-design`, `/fixing-accessibility` 예시 6. **Figma MCP** — 디자인 파일에서 직접 토큰 및 컴포넌트 생성 (선택)" [1 list]
+
+[Session:070435fa 2026-05-05T06:43:48Z L269] User: "/model"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-05T06:44:14Z L272]! User: "마크다운 관련 작업이 많아 qmd를 설치하려고 한다. 전역에 설치하면 하위 프로젝트에도 적용되도록 하고 싶다. 가능하니?"
+-> 1 AI response at line 275:
+1. "가능하다. 다만 `qmd`를 어떤 형태로 설치하느냐에 따라 방식이 다르다. **Claude Code 스킬로 설치하는 경우** `~/.claude/skills/`에 설치하면 모든 [...truncated...] npm 패키지? 2. Quarto (`.qmd` 파일 렌더링 시스템)? 3. Claude Code 전용 스킬/플러그인? 어느 쪽인지 알면 정확한 설치 방법을 안내할 수 있다." [1 list]
+
+[Session:070435fa 2026-05-05T06:45:07Z L278] User: "mcp 서버로 설치하고 싶다."
+-> 1 AI response at line 281:
+1. "`qmd` MCP 서버의 패키지명이나 GitHub URL을 알고 있나? 정확한 이름이 있어야 설치 명령을 구성할 수 있다."
+
+[Session:070435fa 2026-05-05T06:45:30Z L284] User: "너가 찾아지 그건"
+-> 1 AI response at line 292:
+1. "찾았다. **QMD (Query Markdown)** — 마크다운 지식베이스를 위한 로컬 하이브리드 검색 MCP 서버다. **주요 기능:** - BM25 키워드 검색 + 벡터 [...truncated...] mcp ``` `--scope user`로 `~/.claude/settings.json`에 등록되어 모든 프로젝트에 자동 적용된다. 이 툴이 맞나? 맞으면 설치 진행하겠다." [+1 code, 1 list]
+
+[Session:070435fa 2026-05-05T06:48:51Z L295] User: "맞다. 적용하라."
+-> 4 AI responses at lines 303-321:
+1. "연결에 실패했다. 원인을 확인한다."
+2. "npm의 `qmd` 패키지가 실제 QMD 툴이 아닌 빈 패키지다. GitHub에서 직접 설치해야 한다."
+3. "실제 패키지는 `@tobilu/qmd`다. 기존 등록을 제거하고 올바른 패키지로 재설정한다."
+4. "연결 성공. `@tobilu/qmd`(v2.1.0)로 전역 등록 완료됐다. 모든 프로젝트에서 마크다운 검색 도구(`qmd_search`, `qmd_vsearch`, `qmd_query`, `qmd_get`)를 사용할 수 있다."
+
+[Session:070435fa 2026-05-05T06:52:36Z L327] User: "/exit"
+-> 1 AI response at line 331:
+1. "No response requested."
+
+[Session:070435fa 2026-05-05T06:53:18Z L336] User: "/model"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-05T06:53:35Z L339]! User: "https://github.com/forrestchang/andrej-karpathy-skills/blob/main/CLAUDE.md 개념을 전역 클로드코드 설정에 차용하려고 한다. 어떻게 적용하는 게 나을지 작성하라"
+-> 2 AI responses at lines 345-351:
+1. "해당 파일을 먼저 읽어본다."
+2. "내용을 파악했다. 핵심 개념과 적용 전략을 분석한다. --- ## 원본 개념 요약 Karpathy 스타일 가이드는 LLM이 자주 하는 코딩 실수 4가지를 막는 행동 규칙이다: 1. [...truncated...] confusing and ask. - If a simpler approach exists, say so and push back. ``` --- 이 내용으로 파일을 생성할까?" [+1 code, 1 table, 6 list]
+
+[Session:070435fa 2026-05-05T06:56:26Z L357] User: "그렇게 생성하라"
+-> 1 AI response at line 361:
+1. "`~/.claude/rules/coding-behavior.md` 생성 완료. 세 규칙이 모든 프로젝트 세션 시작 시 자동 로드된다."
+
+[Session:070435fa 2026-05-05T07:57:40Z L370] User: "/model"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-05T07:57:53Z L373]! User: "opusplan 모드를 추가하려고 한다. 아직 유효한 기능인가?"
+-> 2 AI responses at lines 376-385:
+1. "공식 문서에서 확인해본다."
+2. "공식 문서와 CLI 어디에도 `opusplan` 관련 항목이 없다. 현재 기준으로 **유효하지 않은 기능**이다. 어떤 맥락에서 접한 건지 알 수 있나? 커뮤니티 글이나 특정 버전 [...truncated...] 무관하게 동작 - 스킬의 `model: opus` 필드로 특정 스킬 실행 시 모델 고정 원하는 목표(Plan Mode에서만 Opus 쓰기 등)가 있으면 대안을 찾아볼 수 있다." [1 list]
+
+[Session:070435fa 2026-05-05T07:59:22Z L389] User: "/model opusplan"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-05T07:59:32Z L393] User: "/model"
+-> 0 AI responses
+
+[Session:070435fa 2026-05-05T07:59:50Z L399]! User: "❯ /model opusplan ⎿ Set model to Opus in plan mode, else Sonnet ?? 이미 있는데"
+-> 1 AI response at line 400:
+1. "확인했다. `/model opusplan`이 유효한 명령이다 — Plan Mode 진입 시 Opus, 일반 모드는 Sonnet으로 자동 전환하는 설정이다. 공식 설정 문서에는 [...truncated...] aude/settings.json`의 `model` 필드에 지정 가능한지는 확실하지 않다. 세션마다 `/model opusplan`으로 수동 설정하는 방식이 현재 확인된 방법이다." [+1 code]
+
+---
+# Session references:
+- Session 070435fa → /Users/whqtker/.claude/projects/-Users-whqtker--claude/070435fa-27b9-4890-9fae-e2feb35cef66.jsonl
+# [Session:{sid} {ISO} L{n}] headers link to original transcripts at ~/.claude/projects/{projectHash}/{sessionId}.jsonl — use L{n} to read the exact line.

@@ -1,0 +1,9 @@
+{
+  "id": "10",
+  "subject": "P12-1: 다중 포트폴리오 성과 비교",
+  "description": "복수의 모의투자 포트폴리오 수익률을 동일 시간축에 오버레이하여 비교한다.\n\n**현황**\n- `paper_portfolio_snapshots` 테이블에 포트폴리오별 시계열 저장됨\n- 개별 포트폴리오 조회만 가능, 비교 API 없음\n\n**백엔드**\n1. `src/server/schemas.py` — `PortfolioCompareSeries(portfolio_id, name, points: list[tuple[str, float]])`, `PortfolioCompareResponse(series: list[PortfolioCompareSeries], base_date)` 추가\n2. `src/server/routers/paper.py` — `GET /paper/compare?ids=id1,id2,id3` 추가\n   - ids 파싱 (최대 5개 제한)\n   - 각 포트폴리오 snapshots 조회\n   - 기준일: ids 중 가장 늦은 첫 snapshot 날짜로 정규화\n   - 수익률 시리즈: `(initial_value → current) / initial_value * 100 - 100`\n   - 시간축 공통 날짜 기준으로 nearest-match 정렬\n\n**프런트**\n3. `index.html` — 모의투자 섹션에 비교 컨트롤 + 오버레이 차트 컨테이너 추가\n4. `app.js` — 모의투자 탭 개선\n   - 포트폴리오 목록에 체크박스 추가\n   - `compareSelectedPortfolios()` 함수: 선택된 ids → `GET /paper/compare` → Lightweight Charts 멀티 라인\n   - 포트폴리오별 다른 색상 자동 배정\n\n**검증**\n- 포트폴리오 2개 이상 존재 시 `GET /paper/compare?ids=...` 정상 응답\n- 동일 포트폴리오 2회 전달 시 중복 제거 확인",
+  "activeForm": "P12-1 포트폴리오 비교 구현 중",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

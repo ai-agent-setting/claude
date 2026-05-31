@@ -1,0 +1,9 @@
+{
+  "id": "18",
+  "subject": "#301 Macro indicators collection",
+  "description": "Add macro_indicators table, macro_indicator_update job (yfinance: KRW=X, ^TNX, CL=F, GC=F), MCP context integration.",
+  "activeForm": "Building macro indicators pipeline",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

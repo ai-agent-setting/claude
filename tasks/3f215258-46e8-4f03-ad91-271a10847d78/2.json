@@ -1,0 +1,9 @@
+{
+  "id": "2",
+  "subject": "#283 Slack notification when AI interpretation saved",
+  "description": "Add SlackNotifier call in mcp_server/tools/interpretation.py after save. Truncate content to 300 chars.",
+  "activeForm": "Implementing #283 AI interpretation Slack notification",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

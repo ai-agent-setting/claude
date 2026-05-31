@@ -1,0 +1,9 @@
+{
+  "id": "8",
+  "subject": "P11-2: 몬테카를로 시뮬레이션",
+  "description": "보유 포트폴리오의 1년 후 가치 분포를 GBM 몬테카를로로 추정하고 팬 차트로 시각화한다.\n\n**현황**\n- 포트폴리오 수익률/변동성 계산 기반(P11-1 구현 후) 활용 가능\n- 몬테카를로 관련 코드 없음\n\n**백엔드**\n1. `src/portfolio/risk.py` — `run_monte_carlo(mu, sigma, initial_value, horizon=252, n_simulations=1000) -> dict` 추가\n   - GBM: `S_t = S_0 * exp((mu - 0.5*sigma²)*dt + sigma*sqrt(dt)*Z)`\n   - 반환: `{horizon_days: int, percentiles: {p5, p25, p50, p75, p95}, time_series: [[p5, p25, p50, p75, p95] per day]}`\n   - time_series는 30일 간격으로 샘플링 (horizon//30 포인트)\n2. `src/server/schemas.py` — `MonteCarloPoint(day, p5, p25, p50, p75, p95)`, `MonteCarloResponse(initial_value, horizon_days, points, n_simulations)` 추가\n3. `src/server/routers/holdings.py` — `GET /portfolio/monte-carlo?horizon=252&simulations=1000` 추가\n   - P11-1의 portfolio_returns 재사용하여 mu, sigma 추정\n   - `run_monte_carlo` 호출\n\n**프런트**\n4. `index.html` — 보유 종목 섹션에 몬테카를로 팬 차트 컨테이너 추가\n5. `app.js` — `loadMonteCarlo()` 함수\n   - Lightweight Charts LineSereis 5개 (p5~p95)\n   - p5~p95 영역 음영 (fill between — SVG path 또는 area series)\n   - 범례: 중앙선(p50) 강조\n   - 보유 종목 탭 진입 시 호출\n\n**검증**\n- `GET /portfolio/monte-carlo` → points 배열 반환, p5 < p50 < p95 항상 성립 확인\n- `n_simulations=100` 으로 빠른 응답 테스트",
+  "activeForm": "P11-2 몬테카를로 구현 중",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

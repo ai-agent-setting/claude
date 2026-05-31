@@ -1,0 +1,9 @@
+{
+  "id": "17",
+  "subject": "#300 Catalyst event automation pipeline",
+  "description": "Add catalyst_event_sync job, strengthen dart.py parsing for earnings/dividends/etc, event calendar API.",
+  "activeForm": "Building catalyst event pipeline",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

@@ -1,0 +1,9 @@
+{
+  "id": "15",
+  "subject": "#298 Screening result performance tracking",
+  "description": "Add entry_price/performance_json columns to screening_candidates, screening_performance_update job (weekly), API endpoint.",
+  "activeForm": "Implementing screening performance tracking",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

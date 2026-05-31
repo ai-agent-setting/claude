@@ -1,0 +1,9 @@
+{
+  "id": "7",
+  "subject": "P11-1: 역사적 VaR / CVaR",
+  "description": "보유 포트폴리오의 역사적 일별 수익률 기반 VaR95, VaR99, CVaR95를 계산한다.\n\n**현황**\n- `portfolio/risk.py`의 `PortfolioRiskMetrics.var_95`는 스냅샷 proxy (개별 종목 손익 분포)\n- 실제 포트폴리오 수익률 시계열 기반 VaR 없음\n- `portfolio_correlation` 엔드포인트에서 이미 종목별 일별 수익률 시계열 계산 중\n\n**백엔드**\n1. `src/portfolio/risk.py` — 함수 추가\n   - `compute_historical_var(returns: list[float], confidence: float = 0.95) -> float`\n     - 수익률 정렬 후 (1-confidence) 백분위 반환\n   - `compute_cvar(returns: list[float], confidence: float = 0.95) -> float`\n     - VaR 초과 손실들의 평균\n   - `compute_portfolio_returns(symbol_returns: dict[str, list[float]], weights: dict[str, float]) -> list[float]`\n     - 가중 포트폴리오 일별 수익률 시계열 생성\n2. `src/server/schemas.py` — `PortfolioVarResponse(var_95, var_99, cvar_95, data_points, computed_at)` 추가\n3. `src/server/routers/holdings.py` — `GET /portfolio/var` 추가\n   - 보유 종목 + 현재 평가금액 비중(weights) 계산\n   - 종목별 일별 수익률 시계열 수집 (analyses history)\n   - `compute_portfolio_returns` → `compute_historical_var/cvar` 호출\n\n**프런트**\n4. `index.html` — 보유 종목 섹션 상단에 리스크 요약 카드 컨테이너 추가\n5. `app.js` — `loadPortfolioVar()` 함수\n   - VaR95, VaR99, CVaR95 수치 카드 (적색 계열)\n   - 툴팁: \"95% 신뢰수준에서 하루 최대 손실 X%\"\n   - 보유 종목 탭 진입 시 호출\n\n**검증**\n- `GET /portfolio/var` → `{var_95: -2.3, var_99: -3.8, cvar_95: -4.1, data_points: 180}` 형태 반환\n- 단일 종목 보유 시 종목 자체 VaR과 일치 확인",
+  "activeForm": "P11-1 VaR/CVaR 구현 중",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

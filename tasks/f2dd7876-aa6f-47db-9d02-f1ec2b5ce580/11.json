@@ -1,0 +1,8 @@
+{
+  "id": "11",
+  "subject": "P8-11: 백테스트 파라미터 그리드 서치",
+  "description": "optimize_parameters 함수, /api/backtests/optimize 엔드포인트",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

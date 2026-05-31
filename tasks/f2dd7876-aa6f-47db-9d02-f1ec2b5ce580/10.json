@@ -1,0 +1,8 @@
+{
+  "id": "10",
+  "subject": "P8-10: 종목 비교 오버레이 차트",
+  "description": "compare_with 파라미터, 정규화 수익률, 오버레이 UI",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

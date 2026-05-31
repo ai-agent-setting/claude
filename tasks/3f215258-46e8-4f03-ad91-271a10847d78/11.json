@@ -1,0 +1,9 @@
+{
+  "id": "11",
+  "subject": "#291 Multi-symbol portfolio backtest",
+  "description": "Add run_portfolio_backtest() in paper_trading/backtest.py, CLI and server endpoint.",
+  "activeForm": "Building portfolio backtest",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

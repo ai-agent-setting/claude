@@ -1,0 +1,48 @@
+# compact-format: 6
+
+[Session:eaea8c2d 2026-05-09T00:05:29Z L8]@@ User: "#151 이슈 구현하라"
+-> 8 AI responses at lines 14-71:
+1. "GitHub에서 이슈 #151 내용을 확인하겠습니다."
+2. "이슈는 계층형 시리즈 마이그레이션 전에 구조 정책을 확정하는 것입니다. 관련 파일들을 먼저 확인하겠습니다."
+3. "현재 구조를 파악했습니다. 이슈 #151은 구현 전에 정책 결정이 필요한 질문들을 확정하는 작업입니다. 몇 가지 확인이 필요합니다."
+4. "정책이 확정됐습니다. 결정 내용을 저장소 문서에 기록하겠습니다."
+5. "이제 `confirmed-decisions.md`와 `decision-log.md`에 결정 사항을 기록하겠습니다."
+6. "이제 `decision-log.md`에 DL-016을 추가합니다."
+7. "이제 이슈를 닫고 커밋합니다."
+8. "이슈 #151이 완료됐습니다. 확정된 정책은 다음과 같습니다: - **D-57**: `series_indexes`에 `parent` 필드만 추가, 새 컨텐츠 타입 없음 - [...truncated...] ent.config.ts`), 라우팅(`[parent]/[child].astro`), 밸리데이션 업데이트, 기존 시리즈 마이그레이션 작업을 이 결정에 근거해서 진행할 수 있습니다." [1 list]
+
+[Session:eaea8c2d 2026-05-09T04:46:25Z L78] User: "이슈 161에 대한 작업 진행하라"
+-> 2 AI responses at lines 87-95:
+1. "이슈 #161 내용을 확인하겠습니다."
+2. "No response requested."
+
+[Session:eaea8c2d 2026-05-09T04:53:47Z L98] User: "이슈 161에 대한 작업 진행하라"
+-> 7 AI responses at lines 100-150:
+1. "이슈 #161의 정책 결정 질문들을 확인했습니다. 관련 파일 현황을 빠르게 확인하고 질문을 드리겠습니다."
+2. "정책이 확정됐습니다. 결정 사항을 문서에 기록하겠습니다."
+3. "D-61~D-67이 이미 있으므로 D-68부터 이어서 기록합니다."
+4. "이제 `decision-log.md`에 DL-017을 추가합니다."
+5. "이제 커밋하고 이슈를 닫겠습니다. 그리고 "컴퓨터구조론 인덱스 내용 유지" 요청도 확인합니다."
+6. "컴퓨터구조론 인덱스는 현재 내용이 유지됩니다. `order` 필드 추가 시 기존 `title`, `series`, `description`은 그대로 두고 필드만 추가하는 방식으로 진행합니다. 지금은 정책 문서 기록 단계이므로 커밋하고 이슈를 닫겠습니다."
+7. "이슈 #161 완료됐습니다. 확정된 정책: - **D-68**: 포스트 제목 숫자 접두사는 전역 선택 사항 — 강제하지 않음 - **D-69**: 접두사는 빌드 시 제거 없이 소스 [...truncated...] 기존 인덱스 파일에 `order` 추가)에서 컴퓨터구조론 인덱스의 기존 `title`/`series`/`description`은 그대로 유지하고 `order` 필드만 추가합니다." [1 list]
+
+[Session:eaea8c2d 2026-05-09T06:44:13Z L154] User: "이슈 169 작업 진행하라"
+-> 4 AI responses at lines 161-190:
+1. "관련 파일들을 빠르게 확인하겠습니다."
+2. "현재 상태 파악 완료입니다. 세 가지 정책 질문을 드리겠습니다."
+3. "정책 확정됐습니다. 문서에 기록하겠습니다."
+4. "이슈 #169 완료됐습니다. 확정된 정책: - **D-72**: 부모 페이지 자식 시리즈 목록 — `order`로 정렬하되 번호는 표시하지 않음 - **D-73**: 자식 페이지 [...truncated...] 제거 — 시리즈 경로와 제목만 표시 다음 구현 작업으로 `src/layouts/PostLayout.astro`에서 `#{order}` 브레드크럼 라인 제거가 필요합니다." [1 list]
+
+[Session:eaea8c2d 2026-05-09T14:24:07Z L197] User: "이슈 176 진행하라"
+-> 6 AI responses at lines 209-255:
+1. "관련 파일을 먼저 확인하겠습니다."
+2. "현재 시리즈 인덱스에는 wikilink가 없고, 스크립트는 `[[concept:slug]]`와 일반 `[[wikilinks]]`만 처리합니다. 정책 결정을 위한 질문을 드리겠습니다."
+3. "정책 확정됐습니다. 현재 최신 D 번호를 확인하겠습니다."
+4. "D-83~D-86, DL-023으로 기록합니다."
+5. "이제 `decision-log.md`에 DL-023을 추가합니다."
+6. "이슈 #176 완료됐습니다. 확정된 정책: - **D-83**: 시리즈 링크 문법 — 부모: `[[series:computer-architecture]]`, 자식: `[[serie [...truncated...] 허용, 포스트 wikilink 금지 다음 구현 작업으로 `scripts/obsidian-to-astro.mjs`에 `[[series:...]]` 변환 로직 추가가 필요합니다." [1 list]
+
+---
+# Session references:
+- Session eaea8c2d → /Users/whqtker/.claude/projects/-Users-whqtker-Documents-workspace-new-blog/eaea8c2d-238b-4a8b-88df-4590d142dc80.jsonl
+# [Session:{sid} {ISO} L{n}] headers link to original transcripts at ~/.claude/projects/{projectHash}/{sessionId}.jsonl — use L{n} to read the exact line.
