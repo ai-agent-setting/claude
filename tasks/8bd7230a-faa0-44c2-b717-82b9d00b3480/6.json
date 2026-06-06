@@ -1,9 +1,0 @@
-{
-  "id": "6",
-  "subject": "Issue #250: 도메인 Value Object 강화",
-  "description": "src/domain/values.py에 Symbol, Score VO 구현 + stock_metadata/validation.py 통합",
-  "activeForm": "Value Object 구현 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

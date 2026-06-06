@@ -1,9 +1,0 @@
-{
-  "id": "9",
-  "subject": "P11-3: 베타 / 알파 / 소르티노",
-  "description": "보유 포트폴리오의 KOSPI 대비 베타, 알파, 소르티노 비율을 계산하고 표시한다.\n\n**현황**\n- `portfolio/risk.py`에 `compute_beta(asset_returns, bench_returns)` 이미 구현됨\n- 사용처 없음, alpha/sortino 함수 없음\n\n**백엔드**\n1. `src/portfolio/risk.py` — 함수 추가\n   - `compute_sortino(returns: list[float], risk_free: float = 0.0, periods: int = 252) -> float | None`\n     - 하방 편차(downside deviation)만 사용\n   - `compute_alpha(portfolio_return: float, bench_return: float, beta: float, risk_free: float = 0.0) -> float`\n     - 젠슨 알파: alpha = R_p - [R_f + beta * (R_b - R_f)]\n2. `src/server/schemas.py` — `PortfolioRiskMetricsResponse(beta, alpha, sortino, sharpe, data_points)` 추가\n3. `src/server/routers/holdings.py` — `GET /portfolio/risk-metrics` 추가\n   - yfinance로 `^KS11` 일별 수익률 조회 (KOSPI 벤치마크, 보유 종목과 동일 기간)\n   - 포트폴리오 수익률 시계열 (P11-1 로직 재사용)\n   - `compute_beta`, `compute_alpha`, `compute_sortino` 호출\n\n**프런트**\n4. `index.html` — Overview 탭 또는 보유 종목 탭에 리스크 지표 카드 컨테이너 추가\n5. `app.js` — `loadRiskMetrics()` 함수\n   - Beta, Alpha, Sortino, Sharpe 수치 카드 4개\n   - Beta < 1 = 방어적(청), > 1 = 공격적(주황) 색상 구분\n   - 보유 종목 탭 진입 시 호출\n\n**검증**\n- `GET /portfolio/risk-metrics` → `{beta, alpha, sortino, sharpe, data_points}` 반환\n- KOSPI 100% 추종 시 beta ≈ 1.0, alpha ≈ 0.0 확인",
-  "activeForm": "P11-3 Beta/Alpha/Sortino 구현 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

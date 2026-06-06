@@ -1,6 +1,0 @@
-ts,model,input,cc,cc5m,cc1h,cr,out,cost,win,rl,evt,line,req
-1777785380,claude-sonnet-4-6,2,13953,13953,0,0,209,0.055465,1777784400,,heuristic_resume,5,req_011Caf4riEMPU8kZRkSM49Z3
-1777785384,,1,1588,1588,0,13953,324,0.015004,,,,17,req_011Caf4s1DoPNrL13cSNS2ZP
-1777785390,,3,10778,10778,0,15541,375,0.050714,,,heuristic_resume,30,req_011Caf4sL5cqqV5kkkWYAYdp
-1777785402,,1,11161,11161,0,26319,838,0.062322,,,heuristic_resume,40,req_011Caf4sn2LCichNDpdqzX4L
-1777785544,,13395,29634,29634,0,37480,6882,0.265787,,,heuristic_resume,43,req_011Caf4w2eF4i57Y6FnzYbLj

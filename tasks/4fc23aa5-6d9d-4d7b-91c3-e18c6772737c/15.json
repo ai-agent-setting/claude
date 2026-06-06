@@ -1,9 +1,0 @@
-{
-  "id": "15",
-  "subject": "P13-3: DB 용량 모니터링 + 수동 정리",
-  "description": "운영 탭에서 테이블별 DB 용량을 확인하고 오래된 데이터를 수동으로 정리할 수 있도록 한다.\n\n**현황**\n- `get_db_health_stats()` 있으나 대시보드 연결 없음\n- purge API 없음\n- `purge_old_job_runs(keep)` 있음\n\n**백엔드**\n1. `src/storage/database.py` — `get_table_row_counts() -> list[dict]` 추가\n   - `SELECT name FROM sqlite_master WHERE type='table'` → 각 테이블 `SELECT COUNT(*)` 집계\n   - 반환: `[{table, row_count, size_estimate_kb}]` (size_estimate ≈ row_count * avg_row_bytes)\n2. `src/storage/database.py` — purge 함수 추가\n   - `purge_old_analyses(keep_days: int) -> int` — `analyses` 테이블 오래된 행 삭제, 삭제 건수 반환\n   - `purge_old_news_articles(keep_days: int) -> int`\n   - `purge_old_news_impacts(keep_days: int) -> int`\n3. `src/server/schemas.py` — `TableStatItem(table, row_count, size_estimate_kb)`, `DbStatsResponse(tables, total_rows, db_size_mb)` 추가\n4. `src/server/routers/ops.py` — 엔드포인트 추가\n   - `GET /ops/db-stats` — 테이블별 통계 반환\n   - `POST /ops/purge` — `{table: \"analyses\"|\"news_articles\"|\"news_impacts\"|\"job_runs\", keep_days: int}` 수신 → 해당 purge 함수 호출, 삭제 건수 반환\n\n**프런트**\n5. `index.html` — 운영 탭에 DB 상태 카드 컨테이너 추가\n6. `app.js` — `loadDbStats()` 함수\n   - 테이블별 행 수 + 크기 추정 테이블\n   - 각 정리 대상 테이블(analyses, news_articles, job_runs)에 \"정리\" 버튼\n   - 버튼 클릭 → keep_days 입력 다이얼로그 → `POST /ops/purge` → 결과 토스트\n\n**검증**\n- `GET /ops/db-stats` → 모든 테이블 포함 응답\n- `POST /ops/purge` with `{table: \"job_runs\", keep_days: 7}` → 삭제 건수 반환 + DB 확인",
-  "activeForm": "P13-3 DB 모니터링 구현 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

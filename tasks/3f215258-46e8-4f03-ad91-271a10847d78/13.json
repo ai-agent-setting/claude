@@ -1,9 +1,0 @@
-{
-  "id": "13",
-  "subject": "#293 Strategy comparison framework",
-  "description": "Add BacktestPolicy ABC and 4 strategies (buy_and_hold, stored_signal, momentum, mean_reversion), compare_strategies() function.",
-  "activeForm": "Building strategy comparison",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

@@ -1,9 +1,0 @@
-{
-  "id": "4",
-  "subject": "#286 Financial metrics enhancement (Piotroski F-Score, EV/EBITDA, Altman Z-Score)",
-  "description": "Add Piotroski F-Score, EV/EBITDA, EV/Sales, revenue growth YoY/QoQ, operating margin trend, Altman Z-Score to FundamentalAnalyzer and models.",
-  "activeForm": "Adding advanced financial metrics",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

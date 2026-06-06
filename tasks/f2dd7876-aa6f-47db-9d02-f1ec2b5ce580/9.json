@@ -1,8 +1,0 @@
-{
-  "id": "9",
-  "subject": "P8-9: 사용자 정의 알림 조건",
-  "description": "alert_rules 테이블, AlertRuleRepository, alert_rule_matcher, CLI 커맨드, 대시보드 UI",
-  "status": "in_progress",
-  "blocks": [],
-  "blockedBy": []
-}

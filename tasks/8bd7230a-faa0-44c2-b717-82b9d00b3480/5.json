@@ -1,9 +1,0 @@
-{
-  "id": "5",
-  "subject": "Issue #248: 에이전트 합의 알고리즘 확장",
-  "description": "consensus_json 컬럼 추가(v17 마이그레이션), complete_opinion_round 응답에 consensus 포함, majority 알고리즘, CONSENSUS_ALGO 설정, 대시보드 표시",
-  "activeForm": "합의 알고리즘 구현 중",
-  "status": "in_progress",
-  "blocks": [],
-  "blockedBy": []
-}

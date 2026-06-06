@@ -1,8 +1,0 @@
-{
-  "id": "7",
-  "subject": "P8-7: DCF 내재가치 계산",
-  "description": "_compute_dcf_valuation, intrinsic_value/margin_of_safety 컬럼, 펀더멘털 점수 반영",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

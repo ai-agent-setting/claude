@@ -1,9 +1,0 @@
-{
-  "id": "5",
-  "subject": "#295 Win rate calculation from realized P&L",
-  "description": "Add avg_cost and realized_pnl tracking to PaperFill, compute win_rate in weight_rebalancer.",
-  "activeForm": "Implementing win rate calculation",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

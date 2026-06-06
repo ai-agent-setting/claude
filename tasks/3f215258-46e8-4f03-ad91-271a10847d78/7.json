@@ -1,9 +1,0 @@
-{
-  "id": "7",
-  "subject": "#287 Dynamic sector baseline pipeline",
-  "description": "Add sector_baselines table, SectorBaselineRepository, sector_baseline_update job, weekly scheduler entry, FundamentalAnalyzer DB injection.",
-  "activeForm": "Building sector baseline pipeline",
-  "status": "in_progress",
-  "blocks": [],
-  "blockedBy": []
-}

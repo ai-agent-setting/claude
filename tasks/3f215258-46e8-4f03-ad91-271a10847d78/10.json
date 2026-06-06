@@ -1,9 +1,0 @@
-{
-  "id": "10",
-  "subject": "#290 MDD and drawdown period tracking",
-  "description": "Add compute_drawdown_analysis() to portfolio/risk.py. Equity curve from daily snapshots, MDD, drawdown periods top 3.",
-  "activeForm": "Computing MDD and drawdown",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

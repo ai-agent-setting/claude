@@ -1,9 +1,0 @@
-{
-  "id": "3",
-  "subject": "P9-3: 배당 캘린더",
-  "description": "보유 종목의 배당 지급 일정을 수집하고 캘린더로 표시한다.\n\n**현황**\n- `dividend_yield`는 analyses에 저장 중\n- 배당 지급일/기준일 데이터 없음\n- yfinance `info['exDividendDate']`, `info['dividendDate']`, `info['lastDividendValue']` 활용 가능\n\n**DB**\n1. `src/storage/migrations.py` — migration 추가\n   - `dividend_events (id, symbol, market, ex_date TEXT, pay_date TEXT, amount REAL, yield_pct REAL, collected_at TEXT)`\n   - `UNIQUE(symbol, market, ex_date)`\n\n**백엔드**\n2. `src/analysis/data_providers/yfinance_provider.py` — `fetch_dividend_events(symbol) -> list[dict]` 추가\n   - yfinance Ticker.dividends (과거 배당 이력) + info 필드로 다음 예정일 조회\n3. `src/storage/database.py` (또는 analysis_facade) — `upsert_dividend_event(...)`, `list_dividend_events(symbols, from_date, to_date)` 추가\n4. `src/jobs/analysis.py` — 해외 종목 분석 파이프라인에서 dividend_events upsert 호출\n5. `src/server/schemas.py` — `DividendEventItem(symbol, market, ex_date, pay_date, amount, yield_pct)` 추가\n6. `src/server/routers/holdings.py` — `GET /holdings/dividend-calendar?months=12` 추가\n   - 보유 종목 심볼 목록 → dividend_events 조회 → ex_date 오름차순\n\n**프런트**\n7. `index.html` — 보유 종목 섹션 하단에 배당 캘린더 테이블 컨테이너 추가\n8. `app.js` — `loadDividendCalendar()` 함수 (보유 종목 탭 진입 시 호출)\n   - 컬럼: 종목명, 기준일(ex_date), 지급일(pay_date), 배당금, 수익률\n\n**검증**\n- 해외 보유 종목이 있을 때 dividend_events 테이블 데이터 확인\n- `GET /holdings/dividend-calendar` 응답 구조 검증",
-  "activeForm": "P9-3 배당 캘린더 구현 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

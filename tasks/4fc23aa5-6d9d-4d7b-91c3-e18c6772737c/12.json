@@ -1,9 +1,0 @@
-{
-  "id": "12",
-  "subject": "P12-3: Kelly Criterion 포지션 사이징",
-  "description": "에이전트별 실적 데이터로 Kelly Criterion 기반 권장 포지션 비중을 계산한다.\n\n**현황**\n- 모의투자 fills에서 win/loss 이력 추출 가능\n- Kelly 계산 로직 없음\n\n**백엔드**\n1. `src/portfolio/risk.py` — 함수 추가\n   - `compute_kelly(win_rate: float, avg_win: float, avg_loss: float, fraction: float = 0.5) -> float`\n     - Kelly: `f = win_rate/|avg_loss| - (1-win_rate)/avg_win`\n     - Half-Kelly: `f * fraction` (기본 0.5)\n     - 결과 클램프: `max(0, min(f, 0.25))` (최대 25% 상한)\n2. `src/storage/portfolio_facade.py` — `get_fill_stats_by_symbol(portfolio_id) -> list[dict]` 추가\n   - fills 테이블에서 심볼별 (win_count, loss_count, avg_win_pct, avg_loss_pct) 집계\n3. `src/server/schemas.py` — `KellySizeItem(symbol, win_rate, avg_win, avg_loss, kelly_weight, half_kelly_weight)`, `KellySizesResponse` 추가\n4. `src/server/routers/paper.py` — `GET /paper/{portfolio_id}/kelly-sizes` 추가\n   - fill_stats 조회 → compute_kelly 호출 → 전체 합산 정규화\n\n**프런트**\n5. `index.html` — 모의투자 포지션 테이블에 Kelly 컬럼 공간 확보\n6. `app.js` — 모의투자 탭에 Kelly 사이징 테이블 섹션 추가\n   - 컬럼: 종목, 승률, 평균이익, 평균손실, Kelly %, Half-Kelly %\n   - Half-Kelly > 현재비중: 녹색 화살표 업, < 현재비중: 적색 화살표 다운\n\n**검증**\n- `GET /paper/{id}/kelly-sizes` → kelly_weight 합산 ≤ 1.0 확인\n- win_rate=0.6, avg_win=0.1, avg_loss=0.05 → kelly ≈ 0.2, half_kelly ≈ 0.1 수동 검증",
-  "activeForm": "P12-3 Kelly 포지션 사이징 구현 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

@@ -1,9 +1,0 @@
-{
-  "id": "1",
-  "subject": "P8-1: 매크로 지표 대시보드 탭",
-  "description": "API 엔드포인트 /api/overview/macro 추가 및 대시보드 매크로 탭 구현",
-  "activeForm": "P8-1 구현 중",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

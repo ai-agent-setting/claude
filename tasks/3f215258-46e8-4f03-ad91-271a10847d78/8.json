@@ -1,9 +1,0 @@
-{
-  "id": "8",
-  "subject": "#288 Time-series VaR/CVaR from portfolio snapshots",
-  "description": "Add compute_timeseries_risk_metrics() to portfolio/risk.py, daily snapshot query in portfolio_state_repository.",
-  "activeForm": "Implementing VaR/CVaR",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

@@ -1,9 +1,0 @@
-{
-  "id": "9",
-  "subject": "#289 Beta calculation and correlation matrix",
-  "description": "Add compute_beta() and compute_correlation_matrix() to portfolio/risk.py, expose in portfolio API.",
-  "activeForm": "Computing beta and correlations",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

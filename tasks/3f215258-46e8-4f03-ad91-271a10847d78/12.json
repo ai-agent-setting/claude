@@ -1,9 +1,0 @@
-{
-  "id": "12",
-  "subject": "#292 Walk-Forward validation",
-  "description": "Add run_walk_forward() in paper_trading/backtest.py with sliding train/test window.",
-  "activeForm": "Building walk-forward validation",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

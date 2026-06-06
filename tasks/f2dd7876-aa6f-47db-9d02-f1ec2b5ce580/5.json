@@ -1,8 +1,0 @@
-{
-  "id": "5",
-  "subject": "P8-5: 배당 수익률 히스토리 추적",
-  "description": "analyses 테이블에 dividend_yield 컬럼, yfinance 수집, 보유 종목 UI 컬럼",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

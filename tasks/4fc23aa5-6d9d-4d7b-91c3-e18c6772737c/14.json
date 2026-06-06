@@ -1,9 +1,0 @@
-{
-  "id": "14",
-  "subject": "P13-2: 수집 로그 실시간 스트리밍",
-  "description": "WebSocket을 통해 job_runs 변경을 실시간으로 운영 탭에 스트리밍한다.\n\n**현황**\n- `/ws/events` 있음 — news article 신규 감지만 함\n- `job_runs` 테이블 변경 감지 없음\n\n**백엔드**\n1. `src/server/routers/ws.py` — `/ws/events` 폴링 루프 확장\n   - 기존: `latest_news_article_id` 감시\n   - 추가: `latest_job_run_id` 감시 (`SELECT MAX(id) FROM job_runs`)\n   - 새 job_run 감지 시 push: `{type: \"job_run\", job_name, status, duration_ms, ran_at, error_message}`\n2. `src/storage/database.py` — `get_latest_job_run_id() -> int | None` 추가 (폴링용)\n\n**프런트**\n3. `index.html` — 운영 탭에 실시간 로그 피드 컨테이너 추가 (`<div id=\"live-log-feed\">`)\n4. `app.js` — 운영 탭 진입 시 `/ws/events` WebSocket 연결 → `job_run` 이벤트 수신\n   - 로그 피드: 최신 30줄 순환 (FIFO)\n   - status별 색상: success=녹, error=적, skipped=회\n   - 탭 이탈 시 소켓 유지 (전역 연결)\n\n**검증**\n- 데몬 실행 중 운영 탭에서 job 완료 이벤트 실시간 수신 확인\n- 소켓 재연결 시 이전 이벤트 중복 수신 없음 확인",
-  "activeForm": "P13-2 WS 로그 스트리밍 구현 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

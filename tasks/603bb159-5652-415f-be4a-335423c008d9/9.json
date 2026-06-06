@@ -1,9 +1,0 @@
-{
-  "id": "9",
-  "subject": "src/cli/agent_round.py + __init__.py — CLI 명령 4개",
-  "description": "agent-round-create, agent-round-context, agent-opinion-add, agent-round-complete.",
-  "activeForm": "CLI 명령 작성 중",
-  "status": "in_progress",
-  "blocks": [],
-  "blockedBy": []
-}

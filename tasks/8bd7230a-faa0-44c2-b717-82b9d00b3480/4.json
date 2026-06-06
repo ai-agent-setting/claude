@@ -1,9 +1,0 @@
-{
-  "id": "4",
-  "subject": "Issue #240: Prometheus /metrics 엔드포인트",
-  "description": "prometheus-client 추가, src/server/routers/metrics.py 신규, 핵심 메트릭 5종 수집",
-  "activeForm": "Prometheus 메트릭 구현 중",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

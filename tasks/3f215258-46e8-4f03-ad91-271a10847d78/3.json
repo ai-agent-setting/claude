@@ -1,9 +1,0 @@
-{
-  "id": "3",
-  "subject": "#294 Add momentum_analyst and reversal_analyst agent profiles",
-  "description": "Add DB seed data for two new agents in migrations.py, update docs.",
-  "activeForm": "Adding new agent profiles",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

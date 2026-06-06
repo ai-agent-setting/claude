@@ -1,9 +1,0 @@
-{
-  "id": "20",
-  "subject": "#303 Telegram/macOS notification channel",
-  "description": "Add alert_dispatcher job with Telegram bot + macOS osascript fallback, AlertSettings, dedup logic, scheduler registration.",
-  "activeForm": "Building notification channels",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

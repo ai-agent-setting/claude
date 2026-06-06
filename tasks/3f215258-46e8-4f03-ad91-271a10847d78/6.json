@@ -1,9 +1,0 @@
-{
-  "id": "6",
-  "subject": "#296 Weighted voting consensus mechanism",
-  "description": "Add weighted vote algorithm to consensus_repository, update complete_opinion_round response. Maintain veto logic.",
-  "activeForm": "Implementing weighted consensus",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

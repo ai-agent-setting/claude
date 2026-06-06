@@ -1,9 +1,0 @@
-{
-  "id": "1",
-  "subject": "#282 Slack signal notification in analysis job",
-  "description": "Add SlackNotifier call in jobs/analysis.py when BUY/SELL signal >= SLACK_SIGNAL_THRESHOLD. Add slack_signal_threshold to config.py.",
-  "activeForm": "Implementing #282 Slack signal notification",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

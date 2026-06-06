@@ -1,9 +1,0 @@
-{
-  "id": "7",
-  "subject": "src/mcp_server/tools/agent_round.py — 4개 MCP write tool",
-  "description": "create_opinion_round, get_round_context, submit_agent_opinion, complete_opinion_round 등록.",
-  "activeForm": "MCP 도구 작성 중",
-  "status": "completed",
-  "blocks": [],
-  "blockedBy": []
-}

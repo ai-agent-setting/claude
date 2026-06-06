@@ -1,9 +1,0 @@
-{
-  "id": "10",
-  "subject": "tests/test_mcp_agent_round.py 작성",
-  "description": "4개 도구 전체 경로·에러 케이스·검증 실패 SKIP 저장 테스트.",
-  "activeForm": "MCP 테스트 작성 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

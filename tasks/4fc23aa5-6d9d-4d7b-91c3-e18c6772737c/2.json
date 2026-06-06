@@ -1,9 +1,0 @@
-{
-  "id": "2",
-  "subject": "P9-2: 섹터 로테이션 히트맵",
-  "description": "섹터별 PER/PBR/ROE 변화를 히트맵으로 시각화한다.\n\n**현황**\n- `sector_baselines` 테이블에 avg_per, avg_pbr, avg_roe 저장됨\n- 히스토리 없고 대시보드 연결 없음\n\n**DB**\n1. `src/storage/migrations.py` — migration 추가\n   - `sector_baseline_history (id, sector, market, avg_per, avg_pbr, avg_roe, sample_count, recorded_at)`\n   - `idx_sbh_sector_recorded ON sector_baseline_history(sector, market, recorded_at DESC)`\n\n**백엔드**\n2. `src/jobs/sector_baseline.py` — `run_sector_baseline_update` 완료 후 `sector_baseline_history`에도 INSERT\n3. `src/storage/database.py` (또는 analysis_facade) — `get_sector_baselines()`, `get_sector_baseline_history(weeks=2)` 추가\n4. `src/server/schemas.py` — `SectorRotationItem(sector, market, avg_per, avg_pbr, avg_roe, per_chg_pct, pbr_chg_pct, roe_chg_pct, sample_count)` 추가\n5. `src/server/routers/overview.py` — `GET /overview/sector-rotation` 추가\n   - 최신 baselines + 이전 주 baselines 조인 → 변화율 계산\n\n**프런트**\n6. `index.html` — 매크로 섹션에 섹터 히트맵 테이블 컨테이너 추가\n7. `app.js` — `loadSectorRotation()` 함수\n   - 섹터행 × PER/PBR/ROE열 테이블\n   - 셀 배경색: 상승 녹색 / 하락 적색 그라디언트\n   - 매크로 탭 진입 시 호출\n\n**검증**\n- sector_baseline_update job 실행 후 history 테이블 기록 확인\n- `GET /overview/sector-rotation` → 섹터 목록 + 변화율 반환",
-  "activeForm": "P9-2 섹터 히트맵 구현 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

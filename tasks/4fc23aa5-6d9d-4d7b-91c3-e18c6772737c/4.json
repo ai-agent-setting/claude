@@ -1,9 +1,0 @@
-{
-  "id": "4",
-  "subject": "P10-1: 에이전트 예측 정확도 (Hit Rate)",
-  "description": "에이전트 의견(BUY/SELL)과 실제 30일 수익률을 매핑해 에이전트별 적중률을 추적한다.\n\n**현황**\n- `opinion_rounds`, `agent_opinions` 테이블 있음\n- `/agent/performance`는 포트폴리오 수익률만, 예측 정확도 추적 없음\n\n**DB**\n1. `src/storage/migrations.py` — migration 추가\n   - `opinion_outcomes (id, round_id TEXT, agent_id TEXT, symbol TEXT, action TEXT, price_at_opinion REAL, price_30d_later REAL, actual_return_pct REAL, is_correct INTEGER, evaluated_at TEXT)`\n   - `UNIQUE(round_id, agent_id)`\n\n**백엔드**\n2. `src/jobs/opinion_outcome_evaluator.py` — 신규 파일\n   - `run_opinion_outcome_evaluation(db)` 함수\n   - 로직: `agent_opinions` 중 `created_at <= now - 30d` && `opinion_outcomes` 미존재 항목 조회\n   - 해당 symbol의 30일 후 가격 조회 (yfinance 또는 stored analyses 활용)\n   - BUY: actual_return > 0 → is_correct=1, SELL: actual_return < 0 → is_correct=1\n3. `src/jobs/runner.py` — 일 1회 스케줄에 `opinion_outcome_evaluation` 등록\n4. `src/storage/database.py` — `upsert_opinion_outcome(...)`, `get_agent_hit_rates() -> list[dict]` 추가\n5. `src/server/routers/agent.py` — `GET /agent/hit-rates` 추가\n   - 에이전트별: `{agent_id, total, correct, hit_rate, avg_return_correct, avg_return_incorrect}`\n\n**프런트**\n6. `index.html` — 운영 탭에 에이전트 성과 카드 컨테이너 추가\n7. `app.js` — `loadAgentHitRates()` 함수\n   - 에이전트별 Hit Rate 수평 막대 차트 (Correct / Incorrect 스택)\n   - 운영 탭 진입 시 호출\n\n**검증**\n- 30일 이상 된 의견이 DB에 있을 때 evaluator 실행 → opinion_outcomes 기록 확인\n- `GET /agent/hit-rates` 응답 구조 검증",
-  "activeForm": "P10-1 Hit Rate 구현 중",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}

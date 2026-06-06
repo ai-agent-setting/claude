@@ -1,9 +1,0 @@
-{
-  "id": "16",
-  "subject": "#299 News sentiment score history",
-  "description": "Add daily/weekly sentiment aggregation queries in news_repository, service method, extend MCP get_recent_news response, API endpoint.",
-  "activeForm": "Building sentiment history",
-  "status": "pending",
-  "blocks": [],
-  "blockedBy": []
-}
