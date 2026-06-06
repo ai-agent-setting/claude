@@ -23,6 +23,7 @@ logs/
 cc-token-saver-data/
 jobs/
 tasks/
+daemon/
 daemon.lock
 daemon.status.json
 daemon-auth-cooldown
