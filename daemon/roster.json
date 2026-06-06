@@ -1,7 +1,7 @@
 {
   "proto": 1,
-  "supervisorPid": 62914,
-  "updatedAt": 1780144099214,
+  "supervisorPid": 17642,
+  "updatedAt": 1780366493672,
   "workers": {
     "800e08ad": {
       "pid": 57617,
@@ -303,6 +303,58 @@
           "name": "Understand grillme"
         },
         "cols": 113,
+        "rows": 21
+      },
+      "decModes": [
+        1000,
+        1002,
+        1003,
+        1006,
+        2004,
+        1004,
+        2031
+      ]
+    },
+    "d8bf5e51": {
+      "pid": 52774,
+      "procStart": "Mon Jun  1 05:37:56 2026",
+      "sessionId": "d8bf5e51-1c2a-4f61-ab62-b038975e82e6",
+      "rendezvousSock": "/tmp/cc-daemon-501/7b853a04/rv/d8bf5e51.sock",
+      "ptySock": "/tmp/cc-daemon-501/7b853a04/spare/aade6fa4.pty.sock",
+      "cliVersion": "2.1.159",
+      "startedAt": 1780292279714,
+      "attempt": 1,
+      "cwd": "/Users/whqtker/Documents/SSAFY/ssafy-race",
+      "dispatch": {
+        "proto": 1,
+        "short": "d8bf5e51",
+        "nonce": "e690b3fa",
+        "sessionId": "d8bf5e51-1c2a-4f61-ab62-b038975e82e6",
+        "createdAt": 1780292279710,
+        "source": "fleet",
+        "cwd": "/Users/whqtker/Documents/SSAFY/ssafy-race",
+        "launch": {
+          "mode": "prompt",
+          "args": [
+            "--session-id",
+            "d8bf5e51-1c2a-4f61-ab62-b038975e82e6",
+            "--agent",
+            "claude",
+            "--",
+            "PS C:\\Users\\chosh\\IdeaProjects\\ssafy-race\\Simulator> PowerShell -ExecutionPolicy Bypass -File autorun.ps1 -Runs 5\n=== Run 1/5 ===\nStart-Process : 지정된 파일을 찾을 수 없습니다 오류로 인해 이 명령을 실행할 수 없습니다.\n위치 C:\\Users\\chosh\\IdeaProjects\\ssafy-race\\Simulator\\autorun.ps1:32 문자:17\n+         $java = Start-Process -FilePath \"java\" `\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : InvalidOperation: (:) [Start-Process], InvalidOperationException\n    + FullyQualifiedErrorId : InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
+          ]
+        },
+        "env": {},
+        "isolation": "none",
+        "respawnFlags": [
+          "--agent",
+          "claude"
+        ],
+        "agent": "claude",
+        "seed": {
+          "intent": "PS C:\\Users\\chosh\\IdeaProjects\\ssafy-race\\Simulator> PowerShell -ExecutionPolicy Bypass -File autorun.ps1 -Runs 5\n=== Run 1/5 ===\nStart-Process : 지정된 파일을 찾을 수 없습니다 오류로 인해 이 명령을 실행할 수 없습니다.\n위치 C:\\Users\\chosh\\IdeaProjects\\ssafy-race\\Simulator\\autorun.ps1:32 문자:17\n+         $java = Start-Process -FilePath \"java\" `\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : InvalidOperation: (:) [Start-Process], InvalidOperationException\n    + FullyQualifiedErrorId : InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
+        },
+        "cols": 90,
         "rows": 21
       },
       "decModes": [

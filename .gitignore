@@ -20,3 +20,12 @@ __pycache__/
 .DS_Store
 image-cache/
 logs/
+cc-token-saver-data/
+jobs/
+tasks/
+daemon.lock
+daemon.status.json
+daemon-auth-cooldown
+daemon-auth-status.json
+.last-cleanup
+.last-update-result.json
