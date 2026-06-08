@@ -54,7 +54,6 @@
   "enabledPlugins": {
     "codex@openai-codex": true,
     "vercel@claude-plugins-official": true,
-    "cc-token-saver@ww-w-ai": true,
     "superpowers@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
@@ -62,12 +61,6 @@
       "source": {
         "source": "github",
         "repo": "openai/codex-plugin-cc"
-      }
-    },
-    "ww-w-ai": {
-      "source": {
-        "source": "directory",
-        "path": "/tmp/cc-token-saver-market"
       }
     }
   },
